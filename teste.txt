@@ -1,4 +1,10 @@
+<<<<<<< HEAD
 
 
 
 coisa escrita aqui o !
+=======
+galinha
+oi
+teste
+>>>>>>> 7359de6a89a5d93902deffa8797902346fc132b6
