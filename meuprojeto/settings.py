@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_extensions',  # ferramentas úteis para desenvolvimento
+    'django_extensions',
+      'accounts',  # ferramentas úteis para desenvolvimento
       # app para autenticação
 
     # Seus apps aqui (adicione quando criar):
@@ -150,8 +151,8 @@ SESSION_SAVE_EVERY_REQUEST = True  # Renovar a sessão a cada requisição
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
     
-# Configuração para modelos de usuário personalizado (se for criar)
-# AUTH_USER_MODEL = 'accounts.CustomUser'
+# Configuração para modelos de usuário personalizado
+AUTH_USER_MODEL = 'accounts.CustomUser'
 
 # Configurações de email (para desenvolvimento)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  

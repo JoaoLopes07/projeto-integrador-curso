@@ -1,0 +1,98 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    .custom-dashboard {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+    }
+    .stat-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin: 20px 0;
+    }
+    .stat-card {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+    .stat-card h3 {
+        margin: 0 0 10px 0;
+        color: #666;
+        font-size: 14px;
+    }
+    .stat-card p {
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+        margin: 0;
+    }
+    .quick-actions {
+        display: flex;
+        gap: 10px;
+        margin: 20px 0;
+    }
+    .quick-actions a {
+        background: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="custom-dashboard">
+    <h1>🏠 Dashboard do Sistema</h1>
+    
+    <div class="stat-cards">
+        <div class="stat-card">
+            <h3>Usuários Registrados</h3>
+            <p>{{ total_users }}</p>
+        </div>
+        <div class="stat-card">
+            <h3>Produtos Ativos</h3>
+            <p>{{ active_products }}</p>
+        </div>
+        <div class="stat-card">
+            <h3>Pedidos do Dia</h3>
+            <p>{{ orders_today }}</p>
+        </div>
+        <div class="stat-card">
+            <h3>Vendas do Mês</h3>
+            <p>R$ {{ monthly_sales|floatformat:2 }}</p>
+        </div>
+    </div>
+    
+    <div class="quick-actions">
+        <a href="/admin/auth/user/add/">➕ Novo Usuário</a>
+        <a href="/admin/meuapp/produto/add/">🛒 Novo Produto</a>
+        <a href="/admin/meuapp/pedido/add/">📝 Novo Pedido</a>
+    </div>
+</div>
+
+
+{{ block.super }}
+{% endblock %}
+
+{% block sidebar %}
+
+<div class="module">
+    <h2>📈 Atividade Recente</h2>
+    <ul>
+        <li>Último login: {{ user.last_login|date:"d/m/Y H:i" }}</li>
+        <li>Novos usuários hoje: 5</li>
+        <li>Pedidos pendentes: 12</li>
+    </ul>
+</div>
+{{ block.super }}
+{% endblock %}
