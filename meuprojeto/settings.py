@@ -37,6 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',  # ferramentas úteis para desenvolvimento
+      # app para autenticação
+
+    # Seus apps aqui (adicione quando criar):
+    # 'accounts',  # app para autenticação
+    # 'produtos',  # exemplo
 ]
 
 MIDDLEWARE = [
@@ -54,7 +60,7 @@ ROOT_URLCONF = 'meuprojeto.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],  # Já configurado corretamente
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -102,9 +108,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'pt-br'  
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo'  
 
 USE_I18N = True
 
@@ -115,8 +121,42 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',  # Adicionado para arquivos estáticos personalizados
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# ==============================================
+# CONFIGURAÇÕES ADICIONAIS PARA LOGIN/LOGOUT/ADMIN
+# ==============================================
+
+# Configurações de autenticação
+
+LOGIN_REDIRECT_URL = '/'  # Para onde redirecionar após o login
+
+LOGOUT_REDIRECT_URL = '/'  # Para onde redirecionar após o logout
+
+LOGIN_URL = '/accounts/login/'  # URL para a página de login
+
+# Configurações de sessão
+SESSION_COOKIE_AGE = 1209600  # Duração da sessão em segundos (2 semanas)
+SESSION_SAVE_EVERY_REQUEST = True  # Renovar a sessão a cada requisição
+
+# Configurações para arquivos de mídia
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+    
+# Configuração para modelos de usuário personalizado (se for criar)
+# AUTH_USER_MODEL = 'accounts.CustomUser'
+
+# Configurações de email (para desenvolvimento)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  
+
+# Configurações do Admin
+ADMIN_SITE_HEADER = "Meu Sistema Administrativo"  
+ADMIN_SITE_TITLE = "Painel de Controle"
+ADMIN_INDEX_TITLE = "Bem-vindo ao Painel de Controle"
