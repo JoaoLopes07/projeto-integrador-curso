@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="register-container">
+    <h2>Criar Nova Conta</h2>
+    
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    <form method="post">
+        {% csrf_token %}
+        
+        <!-- Campo de usuário -->
+        <div class="form-group">
+            <label for="id_username">Nome de usuário:</label>
+            <input type="text" name="username" 
+                   id="id_username" 
+                   class="form-control"
+                   required
+                   autofocus
+                   value="{{ form.username.value|default:'' }}">
+            {% if form.username.errors %}
+                <div class="text-danger small">
+                    {% for error in form.username.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Campo de email -->
+        <div class="form-group">
+            <label for="id_email">Email:</label>
+            <input type="email" name="email" 
+                   id="id_email" 
+                   class="form-control"
+                   required
+                   value="{{ form.email.value|default:'' }}">
+            {% if form.email.errors %}
+                <div class="text-danger small">
+                    {% for error in form.email.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Campo de telefone (opcional) -->
+        <div class="form-group">
+            <label for="id_telefone">Telefone (opcional):</label>
+            <input type="text" name="telefone" 
+                   id="id_telefone" 
+                   class="form-control"
+                   value="{{ form.telefone.value|default:'' }}">
+            {% if form.telefone.errors %}
+                <div class="text-danger small">
+                    {% for error in form.telefone.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Campo de senha -->
+        <div class="form-group">
+            <label for="id_password1">Senha:</label>
+            <input type="password" name="password1" 
+                   id="id_password1" 
+                   class="form-control"
+                   required>
+            {% if form.password1.errors %}
+                <div class="text-danger small">
+                    {% for error in form.password1.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <small class="form-text text-muted">
+                Sua senha deve conter pelo menos 8 caracteres e não pode ser muito comum.
+            </small>
+        </div>
+        
+        <!-- Campo de confirmação de senha -->
+        <div class="form-group">
+            <label for="id_password2">Confirmação de senha:</label>
+            <input type="password" name="password2" 
+                   id="id_password2" 
+                   class="form-control"
+                   required>
+            {% if form.password2.errors %}
+                <div class="text-danger small">
+                    {% for error in form.password2.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-user-plus"></i> Criar Conta
+        </button>
+        
+        <p class="mt-3">
+            Já tem uma conta? 
+            <a href="{% url 'login' %}">
+                <i class="fas fa-sign-in-alt"></i> Faça login
+            </a>
+        </p>
+    </form>
+</div>
+
+<style>
+.register-container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+}
+.form-group {
+    margin-bottom: 20px;
+}
+.alert {
+    margin-bottom: 20px;
+}
+</style>
+{% endblock %}

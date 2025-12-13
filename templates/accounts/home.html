@@ -1,0 +1,262 @@
+{% extends 'base.html' %}
+
+{% block title %}Página Inicial - Meu Sistema{% endblock %}
+
+{% block content %}
+<div class="home-container">
+    <!-- Cabeçalho de Boas-Vindas -->
+    <div class="welcome-header mb-4">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="display-4">
+                    <i class="fas fa-home text-primary"></i> Bem-vindo, {{ user.username }}!
+                </h1>
+                <p class="lead">Esta é sua área principal no sistema.</p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <div class="user-info-card card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="avatar-placeholder me-3">
+                                {% if user.avatar %}
+                                    <img src="{{ user.avatar.url }}" alt="Avatar" class="rounded-circle" width="50" height="50">
+                                {% else %}
+                                    <div class="avatar-icon">
+                                        <i class="fas fa-user-circle fa-3x text-secondary"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <h6 class="mb-1">{{ user.get_full_name|default:user.username }}</h6>
+                                <small class="text-muted">{{ user.email }}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cards de Estatísticas -->
+    <div class="stats-cards mb-5">
+        <h3 class="mb-3"><i class="fas fa-chart-bar"></i> Suas Estatísticas</h3>
+        <div class="row">
+            <div class="col-md-3 mb-3">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <div class="stat-icon mb-2">
+                            <i class="fas fa-calendar-check fa-2x text-primary"></i>
+                        </div>
+                        <h5 class="card-title">Atividade Hoje</h5>
+                        <p class="display-6">3</p>
+                        <small class="text-muted">Ações realizadas</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-3">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <div class="stat-icon mb-2">
+                            <i class="fas fa-clock fa-2x text-success"></i>
+                        </div>
+                        <h5 class="card-title">Tempo Online</h5>
+                        <p class="display-6">2h 30m</p>
+                        <small class="text-muted">Esta semana</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-3">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <div class="stat-icon mb-2">
+                            <i class="fas fa-tasks fa-2x text-warning"></i>
+                        </div>
+                        <h5 class="card-title">Tarefas</h5>
+                        <p class="display-6">5/8</p>
+                        <small class="text-muted">Concluídas</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-3">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <div class="stat-icon mb-2">
+                            <i class="fas fa-bell fa-2x text-info"></i>
+                        </div>
+                        <h5 class="card-title">Notificações</h5>
+                        <p class="display-6">2</p>
+                        <small class="text-muted">Não lidas</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ações Rápidas -->
+    <div class="quick-actions mb-5">
+        <h3 class="mb-3"><i class="fas fa-bolt"></i> Ações Rápidas</h3>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <div class="card action-card h-100">
+                    <div class="card-body text-center">
+                        <div class="action-icon mb-3">
+                            <i class="fas fa-user-edit fa-3x text-primary"></i>
+                        </div>
+                        <h5 class="card-title">Meu Perfil</h5>
+                        <p class="card-text">Atualize suas informações pessoais e preferências.</p>
+                        <a href="{% url 'profile' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-external-link-alt"></i> Acessar
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-3">
+                <div class="card action-card h-100">
+                    <div class="card-body text-center">
+                        <div class="action-icon mb-3">
+                            <i class="fas fa-cog fa-3x text-success"></i>
+                        </div>
+                        <h5 class="card-title">Configurações</h5>
+                        <p class="card-text">Ajuste notificações, privacidade e segurança.</p>
+                        <a href="#" class="btn btn-outline-success">
+                            <i class="fas fa-external-link-alt"></i> Configurar
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-3">
+                <div class="card action-card h-100">
+                    <div class="card-body text-center">
+                        <div class="action-icon mb-3">
+                            <i class="fas fa-question-circle fa-3x text-info"></i>
+                        </div>
+                        <h5 class="card-title">Ajuda & Suporte</h5>
+                        <p class="card-text">Encontre respostas e entre em contato com suporte.</p>
+                        <a href="#" class="btn btn-outline-info">
+                            <i class="fas fa-external-link-alt"></i> Ajuda
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Atividades Recentes -->
+    <div class="recent-activities mb-4">
+        <h3 class="mb-3"><i class="fas fa-history"></i> Atividades Recentes</h3>
+        <div class="card">
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <span>Login realizado com sucesso</span>
+                        </div>
+                        <small class="text-muted">Hoje, 10:30</small>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="fas fa-user-edit text-primary me-2"></i>
+                            <span>Perfil atualizado</span>
+                        </div>
+                        <small class="text-muted">Ontem, 15:45</small>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="fas fa-key text-warning me-2"></i>
+                            <span>Senha alterada</span>
+                        </div>
+                        <small class="text-muted">2 dias atrás</small>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="fas fa-bell text-info me-2"></i>
+                            <span>Notificação recebida</span>
+                        </div>
+                        <small class="text-muted">3 dias atrás</small>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mensagem do Sistema -->
+    <div class="system-message">
+        <div class="alert alert-info">
+            <div class="d-flex">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-info-circle fa-2x"></i>
+                </div>
+                <div class="flex-grow-1 ms-3">
+                    <h5 class="alert-heading">Dica do Sistema</h5>
+                    <p>Esta é sua página inicial personalizada. Aqui você pode ver um resumo de suas atividades e acessar rapidamente as funcionalidades principais do sistema.</p>
+                    <hr>
+                    <p class="mb-0">
+                        <small>Se precisar de ajuda, clique no botão "Ajuda & Suporte" acima ou entre em contato com o administrador do sistema.</small>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.home-container {
+    padding: 20px 0;
+}
+.welcome-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+}
+.user-info-card {
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    border: none;
+}
+.avatar-placeholder {
+    width: 50px;
+    height: 50px;
+}
+.stats-cards .card {
+    transition: transform 0.3s;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.stats-cards .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.stat-icon {
+    opacity: 0.8;
+}
+.action-card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: all 0.3s;
+}
+.action-card:hover {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+.action-card .btn {
+    border-radius: 20px;
+    padding: 5px 20px;
+}
+.recent-activities .list-group-item {
+    border: none;
+    padding: 15px 0;
+}
+.system-message .alert {
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+</style>
+{% endblock %}

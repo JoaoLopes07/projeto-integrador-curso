@@ -40,10 +40,6 @@ INSTALLED_APPS = [
     'django_extensions',
       'accounts',  # ferramentas úteis para desenvolvimento
       # app para autenticação
-
-    # Seus apps aqui (adicione quando criar):
-    # 'accounts',  # app para autenticação
-    # 'produtos',  # exemplo
 ]
 
 MIDDLEWARE = [
@@ -61,7 +57,7 @@ ROOT_URLCONF = 'meuprojeto.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  # Já configurado corretamente
+        'DIRS': [BASE_DIR / 'templates'], 
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -137,9 +133,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Configurações de autenticação
 
-LOGIN_REDIRECT_URL = '/'  # Para onde redirecionar após o login
+# Altere estas linhas:
+LOGIN_REDIRECT_URL = '/accounts/home/'  
+LOGOUT_REDIRECT_URL = '/accounts/login/'
 
-LOGOUT_REDIRECT_URL = '/'  # Para onde redirecionar após o logout
+# registro:
+ACCOUNT_SIGNUP_ENABLED = True
 
 LOGIN_URL = '/accounts/login/'  # URL para a página de login
 
