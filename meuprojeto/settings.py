@@ -40,10 +40,6 @@ INSTALLED_APPS = [
     'django_extensions',
       'accounts',  # ferramentas úteis para desenvolvimento
       # app para autenticação
-
-    # Seus apps aqui (adicione quando criar):
-    # 'accounts',  # app para autenticação
-    # 'produtos',  # exemplo
 ]
 
 MIDDLEWARE = [
@@ -137,9 +133,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Configurações de autenticação
 
-LOGIN_REDIRECT_URL = '/'  # Para onde redirecionar após o login
+# Altere estas linhas:
+LOGIN_REDIRECT_URL = '/accounts/home/'  
+LOGOUT_REDIRECT_URL = '/accounts/login/'
 
-LOGOUT_REDIRECT_URL = '/'  # Para onde redirecionar após o logout
+# Adicione isto para permitir registro:
+ACCOUNT_SIGNUP_ENABLED = True
 
 LOGIN_URL = '/accounts/login/'  # URL para a página de login
 
@@ -161,3 +160,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 ADMIN_SITE_HEADER = "Meu Sistema Administrativo"  
 ADMIN_SITE_TITLE = "Painel de Controle"
 ADMIN_INDEX_TITLE = "Bem-vindo ao Painel de Controle"
+
+
+
+# permitir registro:
+ACCOUNT_SIGNUP_ENABLED = True
