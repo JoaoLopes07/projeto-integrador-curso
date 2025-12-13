@@ -1,4 +1,4 @@
-# accounts/auth_views.py
+
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
@@ -11,7 +11,7 @@ def login_view(request):
     
     if request.user.is_authenticated:
         if request.user.is_superuser:
-            return redirect('admin_dashboard')
+            return redirect('/admin/')
         return redirect('home')
     
     next_url = request.GET.get('next', '')
@@ -37,7 +37,7 @@ def login_view(request):
                     return redirect(redirect_url)
                 
                 if user.is_superuser:
-                    return redirect('admin_dashboard')
+                    return redirect('/admin/')
                 else:
                     return redirect('home')
             else:
@@ -56,7 +56,7 @@ def register_view(request):
     """View para registro de novos usuários"""
     if request.user.is_authenticated:
         if request.user.is_superuser:
-            return redirect('admin_dashboard')
+            return redirect('admin_profile')
         return redirect('home')
     
     if request.method == 'POST':
@@ -68,7 +68,7 @@ def register_view(request):
             messages.success(request, f'Conta criada com sucesso! Bem-vindo, {user.username}!')
             
             if user.is_superuser:
-                return redirect('admin_dashboard')
+                return redirect('admin_profile')
             return redirect('home')
         else:
             

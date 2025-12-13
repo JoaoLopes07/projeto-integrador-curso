@@ -57,7 +57,7 @@ ROOT_URLCONF = 'meuprojeto.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  # Já configurado corretamente
+        'DIRS': [BASE_DIR / 'templates'], 
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -137,7 +137,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = '/accounts/home/'  
 LOGOUT_REDIRECT_URL = '/accounts/login/'
 
-# Adicione isto para permitir registro:
+# registro:
 ACCOUNT_SIGNUP_ENABLED = True
 
 LOGIN_URL = '/accounts/login/'  # URL para a página de login
@@ -160,8 +160,3 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 ADMIN_SITE_HEADER = "Meu Sistema Administrativo"  
 ADMIN_SITE_TITLE = "Painel de Controle"
 ADMIN_INDEX_TITLE = "Bem-vindo ao Painel de Controle"
-
-
-
-# permitir registro:
-ACCOUNT_SIGNUP_ENABLED = True

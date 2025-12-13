@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block title %}Meu Perfil - {{ user.username }}{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="row">
+        <!-- Sidebar do Perfil -->
+        <div class="col-md-4">
+            <div class="card profile-sidebar">
+                <div class="card-body text-center">
+                    <div class="profile-avatar mb-3">
+                        {% if user.avatar %}
+                            <img src="{{ user.avatar.url }}" alt="Avatar" class="rounded-circle" width="150" height="150">
+                        {% else %}
+                            <div class="avatar-placeholder-large">
+                                <i class="fas fa-user-circle fa-7x text-secondary"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <h4>{{ user.get_full_name|default:user.username }}</h4>
+                    <p class="text-muted">@{{ user.username }}</p>
+                    
+                    <div class="user-info mt-4">
+                        <p><i class="fas fa-envelope me-2"></i> {{ user.email }}</p>
+                        {% if user.telefone %}
+                            <p><i class="fas fa-phone me-2"></i> {{ user.telefone }}</p>
+                        {% endif %}
+                        {% if user.data_nascimento %}
+                            <p><i class="fas fa-birthday-cake me-2"></i> {{ user.data_nascimento }}</p>
+                        {% endif %}
+                        <p><i class="fas fa-calendar-alt me-2"></i> Membro desde {{ user.date_joined|date:"d/m/Y" }}</p>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="profile-stats">
+                        <div class="row text-center">
+                            <div class="col-6">
+                                <h5>5</h5>
+                                <small>Tarefas</small>
+                            </div>
+                            <div class="col-6">
+                                <h5>12</h5>
+                                <small>Dias ativo</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Conteúdo Principal do Perfil -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="fas fa-user-edit"></i> Informações do Perfil</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> 
+                        Esta página é apenas para visualização. Para editar suas informações, entre em contato com o administrador.
+                    </div>
+                    
+                    <h5 class="mt-4">Detalhes da Conta</h5>
+                    <table class="table">
+                        <tr>
+                            <th width="30%">Nome de Usuário:</th>
+                            <td>{{ user.username }}</td>
+                        </tr>
+                        <tr>
+                            <th>Email:</th>
+                            <td>{{ user.email }}</td>
+                        </tr>
+                        <tr>
+                            <th>Nome Completo:</th>
+                            <td>{{ user.get_full_name|default:"Não informado" }}</td>
+                        </tr>
+                        <tr>
+                            <th>Status da Conta:</th>
+                            <td>
+                                {% if user.is_active %}
+                                    <span class="badge bg-success">Ativa</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Inativa</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Último Login:</th>
+                            <td>{{ user.last_login|date:"d/m/Y H:i"|default:"Nunca" }}</td>
+                        </tr>
+                    </table>
+                    
+                    <div class="profile-actions mt-4">
+                        <a href="{% url 'home' %}" class="btn btn-primary">
+                            <i class="fas fa-arrow-left"></i> Voltar para Home
+                        </a>
+                        <button class="btn btn-outline-secondary" disabled>
+                            <i class="fas fa-edit"></i> Editar Perfil (em breve)
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.profile-container {
+    padding: 20px 0;
+}
+.profile-sidebar {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.profile-avatar-large {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+}
+.user-info p {
+    margin-bottom: 8px;
+}
+.profile-stats h5 {
+    margin-bottom: 5px;
+}
+</style>
+{% endblock %}
