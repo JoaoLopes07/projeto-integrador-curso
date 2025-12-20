@@ -156,10 +156,10 @@ Django Authentication System
 
 ## Sprint 2: 
 
-> Criar app companies
-> Criar model Company
-> CRUD básico de empresas
-> Criar página pública simples de empresas
+> Criar app companies<br>
+> Criar model Company<br>
+> CRUD básico de empresas<br>
+> Criar página pública simples de empresas<br>
 
 
 ## Sprint 3:
