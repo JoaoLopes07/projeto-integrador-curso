@@ -38,8 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
-      'accounts',  # ferramentas úteis para desenvolvimento
-      # app para autenticação
+    'companies',
+    'accounts', 
 ]
 
 MIDDLEWARE = [

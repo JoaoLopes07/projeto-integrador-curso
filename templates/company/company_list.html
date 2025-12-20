@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h1>Empresas Cadastradas</h1>
+        <a href="{% url 'company-create' %}" class="btn btn-primary">Adicionar Nova</a>
+    </div>
+
+    {% if object_list %}
+    <div style="overflow-x: auto;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome Fantasia</th>
+                    <th>CNPJ</th>
+                    <th>Email</th>
+                    <th>Cidade/UF</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for company in object_list %}
+                <tr>
+                    <td><strong>{{ company.nome_fantasia }}</strong></td>
+                    <td>{{ company.cnpj }}</td>
+                    <td>{{ company.email_contato }}</td>
+                    <td>{{ company.cidade }}/{{ company.estado }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div style="text-align: center; padding: 3rem;">
+        <p style="color: var(--text-secondary); margin-bottom: 1rem;">Nenhuma empresa cadastrada ainda.</p>
+        <a href="{% url 'company-create' %}" class="btn btn-primary">Cadastre a primeira</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
