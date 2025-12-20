@@ -13,9 +13,9 @@ SQLite/PostgreSQL (banco de dados)
 
 Django Authentication System
 
-##🚀 Sprint 1 - Autenticação e Usuários (Concluída)
+## 🚀 Sprint 1 - Autenticação e Usuários (Concluída)
 
-##✅ Funcionalidades Implementadas
+## ✅ Funcionalidades Implementadas
 
 # 1. Estrutura do Projeto
 
@@ -73,9 +73,9 @@ Django Authentication System
 > Administrativas:
 > /admin/ - Painel de administração do Django
 >
->URLs para gerenciamento de usuários através do admin nativo
+> URLs para gerenciamento de usuários através do admin nativo
 
-#6. Redirecionamentos Inteligentes
+# 6. Redirecionamentos Inteligentes
 
 > Redirecionamento de /login/ para /accounts/login/ (permanente)
 >
@@ -83,7 +83,7 @@ Django Authentication System
 >
 > Fluxo seguro para páginas protegidas
 
-##🔒 Sistema de Segurança
+## 🔒 Sistema de Segurança
 >   Autenticação segura usando sessões Django
 >
 >    Proteção contra CSRF
@@ -94,7 +94,7 @@ Django Authentication System
 >
 >  Tokens únicos para recuperação de senha
 
-#🎨 Templates e Interface
+# 🎨 Templates e Interface
 
 >Templates personalizados para autenticação
 >
@@ -104,7 +104,7 @@ Django Authentication System
 >
 >Formulários com validação client-side e server-side
 
-#📁 Estrutura de URLs Principais
+# 📁 Estrutura de URLs Principais
 
 # URLs públicas
 
@@ -120,9 +120,9 @@ Django Authentication System
 # URLs administrativas
 
 > path('admin/', ...)               # Admin Django
->(Futuro: painel admin customizado)
+> (Futuro: painel admin customizado)
 
-#🔄 Fluxo de Autenticação
+## 🔄 Fluxo de Autenticação
 
 > Usuário não autenticado: Acesso apenas a login e registro
 
@@ -134,7 +134,7 @@ Django Authentication System
 
 > Logout: Encerra sessão e redireciona para login
 
-# 🛠️ Configuração e Instalação
+## 🛠️ Configuração e Instalação
 >bash
 > #Clonar repositório
 >git clone [url-do-repositorio]
@@ -149,7 +149,7 @@ Django Authentication System
 >python manage.py createsuperuser
 >
 ># Executar servidor
->python manage.py runserver
+> python manage.py runserver
 >
 
 ## 📈 Próximas Sprints (Planejadas)
