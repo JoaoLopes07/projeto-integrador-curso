@@ -164,14 +164,15 @@ Django Authentication System
 
 ## Sprint 3:
 
-> Criar app projects
-> Criar model Project
-> CRUD básico de projetos
+> Criar app projects<br>
+> Criar model Project<br>
+> CRUD básico de projetos<br>
+
 
 ## Sprint 4:
 
->Criar app surveys
->Criar modelos SurveyYear e SurveyResponse
->Criar formulário de pesquisa anual
->Configuração de permissões por tipo de usuário
->Criação do layout base com Bootstrap
+>Criar app surveys<br>
+>Criar modelos SurveyYear e SurveyResponse<br>
+>Criar formulário de pesquisa anual<br>
+>Configuração de permissões por tipo de usuário<br>
+>Criação do layout base com Bootstrap<br>
