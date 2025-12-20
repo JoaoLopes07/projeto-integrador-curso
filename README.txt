@@ -1,7 +1,7 @@
-##📋 Sobre o Projeto
+## 📋 Sobre o Projeto
 Sistema web desenvolvido em Django com arquitetura modular, focado em autenticação de usuários e controle de acesso baseado em perfis. O projeto implementa um sistema robusto de gerenciamento com separação clara entre funcionalidades públicas, de usuários autenticados e administrativas.
 
-##🎯 Tecnologias Utilizadas
+## 🎯 Tecnologias Utilizadas
 
 Python 
 
