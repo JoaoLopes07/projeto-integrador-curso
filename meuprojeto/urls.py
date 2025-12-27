@@ -43,5 +43,9 @@ urlpatterns = [
              template_name='registration/password_reset_complete.html'
          ),
          name='password_reset_complete'),
+    
+     #incluindo as URLs do app surveys
+    path("pesquisa/", include("surveys.urls")),
+
 
 ]
