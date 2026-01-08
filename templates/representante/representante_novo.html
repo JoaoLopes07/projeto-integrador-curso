@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="register-container">
+    <h2>Criar Novo Responsável</h2>
+
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+
+        <!-- Campo de nome_completo -->
+        <div class="form-group">
+            <label for="id_nome_completo">Nome Completo:</label>
+            <input type="text" name="nome_completo" id="id_nome_completo"
+                class="form-control {% if form.nome_completo.errors %}is-invalid{% endif %}" required autofocus
+                value="{{ form.nome_completo.value|default:'' }}">
+            {% if form.nome_completo.errors %}
+            <div class="text-danger small">
+                {% for error in form.nome_completo.errors %}
+                {{ error }}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Campo de nome_social -->
+        <div class="form-group">
+            <label for="id_nome_social">Nome Social (Opcional):</label>
+            <input type="text" name="nome_social" id="id_nome_social"
+                class="form-control {% if form.nome_social.errors %}is-invalid{% endif %}"
+                value="{{ form.nome_social.value|default:'' }}">
+            {% if form.nome_social.errors %}
+            <div class="text-danger small">
+                {% for error in form.nome_social.errors %}
+                {{ error }}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Campo de cpf -->
+        <div class="form-group">
+            <label for="id_cpf">CPF:</label>
+            <input type="text" name="cpf" id="id_cpf" class="form-control {% if form.cpf.errors %}is-invalid{% endif %}"
+                required value="{{ form.cpf.value|default:'' }}">
+            {% if form.cpf.errors %}
+            <div class="text-danger small">
+                {% for error in form.cpf.errors %}
+                {{ error }}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Campo de email -->
+        <div class="form-group">
+            <label for="id_email">E-mail de contato:</label>
+            <input type="email" name="email" id="id_email"
+                class="form-control {% if form.email.errors %}is-invalid{% endif %}" required
+                value="{{ form.email.value|default:'' }}">
+            {% if form.email.errors %}
+            <div class="text-danger small">
+                {% for error in form.email.errors %}
+                {{ error }}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Campo de telefone -->
+        <div class="form-group">
+            <label for="id_telefone">Telefone:</label>
+            <input type="text" name="telefone" id="id_telefone"
+                class="form-control {% if form.telefone.errors %}is-invalid{% endif %}" required
+                value="{{ form.telefone.value|default:'' }}">
+            {% if form.telefone.errors %}
+            <div class="text-danger small">
+                {% for error in form.telefone.errors %}
+                {{ error }}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Campo de nick_discord -->
+        <div class="form-group">
+            <label for="id_nick_discord">Nick no Discord:</label>
+            <input type="text" name="nick_discord" id="id_nick_discord"
+                class="form-control {% if form.nick_discord.errors %}is-invalid{% endif %}" required
+                value="{{ form.nick_discord.value|default:'' }}">
+            {% if form.nick_discord.errors %}
+            <div class="text-danger small">
+                {% for error in form.nick_discord.errors %}
+                {{ error }}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Campo de cep -->
+        <div class="form-group">
+            <label for="id_cep">CEP:</label>
+            <input type="text" name="cep" id="id_cep" class="form-control {% if form.cep.errors %}is-invalid{% endif %}"
+                required value="{{ form.cep.value|default:'' }}">
+            {% if form.cep.errors %}
+            <div class="text-danger small">
+                {% for error in form.cep.errors %}
+                {{ error }}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Campo de endereco -->
+        <div class="form-group">
+            <label for="id_endereco">Endereço:</label>
+            <input type="text" name="endereco" id="id_endereco"
+                class="form-control {% if form.endereco.errors %}is-invalid{% endif %}" required
+                value="{{ form.endereco.value|default:'' }}">
+            {% if form.endereco.errors %}
+            <div class="text-danger small">
+                {% for error in form.endereco.errors %}
+                {{ error }}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Campo de numero -->
+        <div class="form-group">
+            <label for="id_numero">Número:</label>
+            <input type="text" name="numero" id="id_numero"
+                class="form-control {% if form.numero.errors %}is-invalid{% endif %}" required
+                value="{{ form.numero.value|default:'' }}">
+            {% if form.numero.errors %}
+            <div class="text-danger small">
+                {% for error in form.numero.errors %}
+                {{ error }}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Campo de complemento -->
+        <div class="form-group">
+            <label for="id_complemento">Complemento:</label>
+            <input type="text" name="complemento" id="id_complemento"
+                class="form-control {% if form.complemento.errors %}is-invalid{% endif %}"
+                value="{{ form.complemento.value|default:'' }}">
+            {% if form.complemento.errors %}
+            <div class="text-danger small">
+                {% for error in form.complemento.errors %}
+                {{ error }}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Campo de bairro -->
+        <div class="form-group">
+            <label for="id_bairro">Bairro:</label>
+            <input type="text" name="bairro" id="id_bairro"
+                class="form-control {% if form.bairro.errors %}is-invalid{% endif %}" required
+                value="{{ form.bairro.value|default:'' }}">
+            {% if form.bairro.errors %}
+            <div class="text-danger small">
+                {% for error in form.bairro.errors %}
+                {{ error }}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Campo de cidade -->
+        <div class="form-group">
+            <label for="id_cidade">Cidade:</label>
+            <input type="text" name="cidade" id="id_cidade"
+                class="form-control {% if form.cidade.errors %}is-invalid{% endif %}" required
+                value="{{ form.cidade.value|default:'' }}">
+            {% if form.cidade.errors %}
+            <div class="text-danger small">
+                {% for error in form.cidade.errors %}
+                {{ error }}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Campo de estado -->
+        <div class="form-group">
+            <label for="id_estado">Estado:</label>
+            <input type="text" name="estado" id="id_estado"
+                class="form-control {% if form.estado.errors %}is-invalid{% endif %}" required
+                value="{{ form.estado.value|default:'' }}">
+            {% if form.estado.errors %}
+            <div class="text-danger small">
+                {% for error in form.estado.errors %}
+                {{ error }}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-user-plus"></i> Criar Responsável
+        </button>
+
+    </form>
+
+</div>
+{% endblock %}
