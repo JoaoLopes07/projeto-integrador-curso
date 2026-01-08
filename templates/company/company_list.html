@@ -26,6 +26,17 @@
                     <td>{{ company.cnpj }}</td>
                     <td>{{ company.email_contato }}</td>
                     <td>{{ company.cidade }}/{{ company.estado }}</td>
+                    <td>
+                        <a href="{% url 'company-update' company.pk %}"
+                            class="btn btn-sm btn-outline-primary">Editar</a>
+                        <form method="post" action="{% url 'company-delete' company.pk %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-outline-danger"
+                                onclick="return confirm('Tem certeza que deseja deletar a empresa {{ company.nome_fantasia }}?')">
+                                Deletar
+                            </button>
+                        </form>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Company
+from .models import Company, Representante
 
 class CompanySerializer(serializers.ModelSerializer):
     class Meta:
@@ -20,3 +20,24 @@ class CompanySerializer(serializers.ModelSerializer):
             'estado',
             'representante',
         ]
+
+class RepresentanteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Representante
+        fields = [
+            'id',
+            'nome_completo',
+            'nome_social',
+            'cpf',
+            'email',
+            'telefone',
+            'nick_discord',
+            'cep',
+            'endereco',
+            'numero',
+            'complemento',
+            'bairro',
+            'cidade',
+            'estado',
+        ]
+        
