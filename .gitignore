@@ -1,6 +1,7 @@
 venv
 .venv
-__pycache
+__pycache__
 *.cache
 *.sqlite3
 *.sqlite
+.vscode
