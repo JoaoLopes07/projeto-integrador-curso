@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5 text-center">
+    <h2>Pesquisa já respondida</h2>
+
+    <p class="mt-3">
+        Você já respondeu a pesquisa deste ano.
+        Agradecemos pela sua participação.
+    </p>
+
+    <a href="{% url 'surveys:responder' %}" class="btn btn-secondary mt-3">
+        Voltar
+    </a>
+</div>
+{% endblock %}
