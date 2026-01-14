@@ -1,130 +1,91 @@
 {% extends 'base.html' %}
 
-{% block title %}Meu Perfil - {{ user.username }}{% endblock %}
+{% block title %}Perfil de Usuário{% endblock %}
 
 {% block content %}
-<div class="profile-container">
+<div class="container py-4">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Minha Conta</h1>
+        <span class="badge bg-primary">Associação Ativa</span>
+    </div>
+
     <div class="row">
-        <!-- Sidebar do Perfil -->
-        <div class="col-md-4">
-            <div class="card profile-sidebar">
+        <div class="col-xl-4 col-lg-5">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Foto de Perfil</h6>
+                </div>
                 <div class="card-body text-center">
-                    <div class="profile-avatar mb-3">
+                    <div class="mb-4">
                         {% if user.avatar %}
-                            <img src="{{ user.avatar.url }}" alt="Avatar" class="rounded-circle" width="150" height="150">
+                        <img class="img-profile rounded-circle shadow-sm" src="{{ user.avatar.url }}"
+                            style="width: 160px; height: 160px; object-fit: cover;">
                         {% else %}
-                            <div class="avatar-placeholder-large">
-                                <i class="fas fa-user-circle fa-7x text-secondary"></i>
-                            </div>
-                        {% endif %}
-                    </div>
-                    
-                    <h4>{{ user.get_full_name|default:user.username }}</h4>
-                    <p class="text-muted">@{{ user.username }}</p>
-                    
-                    <div class="user-info mt-4">
-                        <p><i class="fas fa-envelope me-2"></i> {{ user.email }}</p>
-                        {% if user.telefone %}
-                            <p><i class="fas fa-phone me-2"></i> {{ user.telefone }}</p>
-                        {% endif %}
-                        {% if user.data_nascimento %}
-                            <p><i class="fas fa-birthday-cake me-2"></i> {{ user.data_nascimento }}</p>
-                        {% endif %}
-                        <p><i class="fas fa-calendar-alt me-2"></i> Membro desde {{ user.date_joined|date:"d/m/Y" }}</p>
-                    </div>
-                    
-                    <hr>
-                    
-                    <div class="profile-stats">
-                        <div class="row text-center">
-                            <div class="col-6">
-                                <h5>5</h5>
-                                <small>Tarefas</small>
-                            </div>
-                            <div class="col-6">
-                                <h5>12</h5>
-                                <small>Dias ativo</small>
-                            </div>
+                        <div class="d-inline-flex align-items-center justify-content-center bg-light rounded-circle"
+                            style="width: 160px; height: 160px;">
+                            <i class="fas fa-user fa-5x text-secondary"></i>
                         </div>
+                        {% endif %}
+                    </div>
+                    <h5 class="font-weight-bold text-dark mb-1">{{ user.get_full_name|default:user.username }}</h5>
+                    <p class="text-muted mb-4">{{ user.get_role_display|default:"Usuário do Sistema" }}</p>
+
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary" type="button"><i class="fas fa-upload me-2"></i>Alterar
+                            Foto</button>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <!-- Conteúdo Principal do Perfil -->
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
-                    <h4><i class="fas fa-user-edit"></i> Informações do Perfil</h4>
+
+        <div class="col-xl-8 col-lg-7">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Informações Pessoais</h6>
                 </div>
                 <div class="card-body">
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle"></i> 
-                        Esta página é apenas para visualização. Para editar suas informações, entre em contato com o administrador.
+                    {% if not user.nome_completo %}
+                    <div class="alert alert-warning border-left-warning" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Complete seu cadastro para liberar todas as funções.
                     </div>
-                    
-                    <h5 class="mt-4">Detalhes da Conta</h5>
-                    <table class="table">
-                        <tr>
-                            <th width="30%">Nome de Usuário:</th>
-                            <td>{{ user.username }}</td>
-                        </tr>
-                        <tr>
-                            <th>Email:</th>
-                            <td>{{ user.email }}</td>
-                        </tr>
-                        <tr>
-                            <th>Nome Completo:</th>
-                            <td>{{ user.get_full_name|default:"Não informado" }}</td>
-                        </tr>
-                        <tr>
-                            <th>Status da Conta:</th>
-                            <td>
-                                {% if user.is_active %}
-                                    <span class="badge bg-success">Ativa</span>
-                                {% else %}
-                                    <span class="badge bg-danger">Inativa</span>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Último Login:</th>
-                            <td>{{ user.last_login|date:"d/m/Y H:i"|default:"Nunca" }}</td>
-                        </tr>
-                    </table>
-                    
-                    <div class="profile-actions mt-4">
-                        <a href="{% url 'home' %}" class="btn btn-primary">
-                            <i class="fas fa-arrow-left"></i> Voltar para Home
-                        </a>
-                        <button class="btn btn-outline-secondary" disabled>
-                            <i class="fas fa-edit"></i> Editar Perfil (em breve)
-                        </button>
-                    </div>
+                    {% endif %}
+
+                    <form>
+                        <div class="row gx-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="small mb-1 font-weight-bold">Nome de Usuário</label>
+                                <input class="form-control bg-light" type="text" value="{{ user.username }}" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="small mb-1 font-weight-bold">Email</label>
+                                <input class="form-control bg-light" type="text" value="{{ user.email }}" readonly>
+                            </div>
+                        </div>
+
+                        <div class="row gx-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="small mb-1 font-weight-bold">Telefone</label>
+                                <input class="form-control bg-light" type="text" value="{{ user.telefone|default:'-' }}"
+                                    readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="small mb-1 font-weight-bold">Data de Cadastro</label>
+                                <input class="form-control bg-light" type="text"
+                                    value="{{ user.date_joined|date:'d/m/Y' }}" readonly>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-end">
+                            <a href="{% url 'home' %}" class="btn btn-light border me-2">Voltar</a>
+                            <button type="button" class="btn btn-primary" disabled>Salvar Alterações</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<style>
-.profile-container {
-    padding: 20px 0;
-}
-.profile-sidebar {
-    border: none;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-.profile-avatar-large {
-    width: 150px;
-    height: 150px;
-    margin: 0 auto;
-}
-.user-info p {
-    margin-bottom: 8px;
-}
-.profile-stats h5 {
-    margin-bottom: 5px;
-}
-</style>
 {% endblock %}

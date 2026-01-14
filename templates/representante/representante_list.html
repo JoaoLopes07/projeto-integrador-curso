@@ -1,55 +1,62 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="card">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-        <h1>Responsáveis Cadastrados</h1>
-        <a href="{% url 'representante-create' %}" class="btn btn-primary">Adicionar Novo</a>
+<div class="container-fluid px-4 py-4">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Responsáveis Legais</h1>
+        <a href="{% url 'representante-create' %}" class="btn btn-sm btn-success shadow-sm">
+            <i class="fas fa-user-plus fa-sm text-white-50 me-2"></i>Novo Responsável
+        </a>
     </div>
 
-    {% if object_list %}
-    <div style="overflow-x: auto;">
-        <table>
-            <thead>
-                <tr>
-                    <th>Nome Completo</th>
-                    <th>CPF</th>
-                    <th>Email</th>
-                    <th>Telefone</th>
-                    <th>Nick Discord</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for representante in object_list %}
-                <tr>
-                    <td><strong>{{ representante.nome_completo }}</strong></td>
-                    <td>{{ representante.cpf }}</td>
-                    <td>{{ representante.email }}</td>
-                    <td>{{ representante.telefone }}</td>
-                    <td>{{ representante.nick_discord }}</td>
-                    <td>
-                        <a href="{% url 'representante-update' representante.pk %}"
-                            class="btn btn-sm btn-outline-primary">Editar</a>
-                        <form method="post" action="{% url 'representante-delete' representante.pk %}"
-                            style="display: inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-sm btn-outline-danger"
-                                onclick="return confirm('Tem certeza que deseja deletar o representante {{ representante.nome_completo }}?')">
-                                Deletar
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="card shadow mb-4 border-left-success">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-success">Lista de Representantes</h6>
+        </div>
+        <div class="card-body">
+            {% if object_list %}
+            <div class="table-responsive">
+                <table class="table table-hover" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Nome Completo</th>
+                            <th>Email</th>
+                            <th>Discord</th>
+                            <th class="text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for representante in object_list %}
+                        <tr>
+                            <td class="font-weight-bold">{{ representante.nome_completo }}</td>
+                            <td>{{ representante.email }}</td>
+                            <td><span class="badge bg-light text-dark border">{{ representante.nick_discord }}</span>
+                            </td>
+                            <td class="text-center">
+                                <a href="{% url 'representante-update' representante.pk %}"
+                                    class="btn btn-sm btn-circle btn-light" title="Editar">
+                                    <i class="fas fa-pen text-primary"></i>
+                                </a>
+                                <form method="post" action="{% url 'representante-delete' representante.pk %}"
+                                    class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-circle btn-light" title="Remover"
+                                        onclick="return confirm('Tem certeza?')">
+                                        <i class="fas fa-trash text-danger"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <p class="text-muted">Nenhum representante cadastrado.</p>
+            </div>
+            {% endif %}
+        </div>
     </div>
-    {% else %}
-    <div style="text-align: center; padding: 3rem;">
-        <p style="color: var(--text-secondary); margin-bottom: 1rem;">Nenhum responsável cadastrado ainda.</p>
-        <a href="{% url 'representante-create' %}" class="btn btn-primary">Cadastre o primeiro</a>
-    </div>
-    {% endif %}
 </div>
 {% endblock %}
