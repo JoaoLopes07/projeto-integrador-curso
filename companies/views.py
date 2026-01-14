@@ -63,7 +63,7 @@ class CompanyUpdateView(APIView):
         representantes = Representante.objects.all()
         return render(
             request,
-            "company/company_editar.html",
+            "company/company_form.html",
             {"form": serializer, "representantes": representantes, "company": company},
         )
 
@@ -77,7 +77,7 @@ class CompanyUpdateView(APIView):
             representantes = Representante.objects.all()
             return render(
                 request,
-                "company/company_editar.html",
+                "company/company_form.html",
                 {
                     "form": serializer,
                     "representantes": representantes,
