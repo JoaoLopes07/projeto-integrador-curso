@@ -4,13 +4,13 @@ class Company(models.Model):
     representante = models.ForeignKey('Representante', on_delete=models.CASCADE, null=True, blank=True)
     nome_fantasia = models.CharField(max_length=255)
     razao_social = models.CharField(max_length=255)
-    cnpj = models.CharField(max_length=18, unique=True)
+    cnpj = models.CharField(max_length=14, unique=True)
     email_contato = models.EmailField()
-    telefone = models.CharField(max_length=20)
+    telefone = models.CharField(max_length=11)
     site = models.URLField(blank=True, null=True)
     
     # Endereço
-    cep = models.CharField(max_length=9)
+    cep = models.CharField(max_length=8)
     endereco = models.CharField(max_length=255)
     numero = models.CharField(max_length=10)
     complemento = models.CharField(max_length=255, blank=True, null=True)
@@ -24,13 +24,13 @@ class Company(models.Model):
 class Representante(models.Model):
     nome_completo = models.CharField(max_length=255)
     nome_social = models.CharField(max_length=255, blank=True, null=True)
-    cpf = models.CharField(max_length=14, unique=True)
+    cpf = models.CharField(max_length=11, unique=True)
     email = models.EmailField()
-    telefone = models.CharField(max_length=20)
+    telefone = models.CharField(max_length=11)
     nick_discord = models.CharField(max_length=255)
 
     # Endereço
-    cep = models.CharField(max_length=9)
+    cep = models.CharField(max_length=8)
     endereco = models.CharField(max_length=255)
     numero = models.CharField(max_length=10)
     complemento = models.CharField(max_length=255, blank=True, null=True)
