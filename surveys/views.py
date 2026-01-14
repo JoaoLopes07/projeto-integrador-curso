@@ -20,7 +20,8 @@ def survey_response_create(request):
             request,
             "Você já respondeu a pesquisa deste ano."
         )
-        return redirect("survey_already_answered")
+        return redirect("surveys:already_answered")
+
 
     # 3. Processa formulário
     if request.method == "POST":
@@ -35,7 +36,8 @@ def survey_response_create(request):
                 request,
                 "Pesquisa enviada com sucesso!"
             )
-            return redirect("survey_success")
+            return redirect("surveys:success")
+
     else:
         form = SurveyResponseForm()
 
@@ -43,4 +45,19 @@ def survey_response_create(request):
         request,
         "surveys/survey_form.html",
         {"form": form, "survey_year": survey_year}
+    )
+
+@login_required
+def survey_already_answered(request):
+    return render(
+        request,
+        "surveys/already_answered.html"
+    )
+
+
+@login_required
+def survey_success(request):
+    return render(
+        request,
+        "surveys/success.html"
     )
