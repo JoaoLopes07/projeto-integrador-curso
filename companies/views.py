@@ -1,162 +1,72 @@
-from django.shortcuts import redirect, render
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.utils.decorators import method_decorator
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from .models import Company, Representante
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from .serializers import CompanySerializer, RepresentanteSerializer
-from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required, user_passes_test
+from .forms import CompanyForm, RepresentanteForm
 
 
 def is_admin_or_superuser(user):
     return user.is_superuser or user.is_staff
 
 
-@method_decorator(login_required, name="dispatch")
-@method_decorator(
-    user_passes_test(is_admin_or_superuser, login_url="/accounts/home/"),
-    name="dispatch",
-)
-class CompanyListView(APIView):
-    def get(self, request, format=None):
-        companies = Company.objects.all()
-        return render(request, "company/company_list.html", {"object_list": companies})
+admin_required = [
+    login_required,
+    user_passes_test(is_admin_or_superuser, login_url='/accounts/home/')
+]
 
 
-@method_decorator(login_required, name="dispatch")
-@method_decorator(
-    user_passes_test(is_admin_or_superuser, login_url="/accounts/home/"),
-    name="dispatch",
-)
-class CompanyCreateView(APIView):
-
-    def get(self, request, format=None):
-        serializer = CompanySerializer()
-        representantes = Representante.objects.all()
-        return render(
-            request,
-            "company/company_novo.html",
-            {"form": serializer, "representantes": representantes},
-        )
-
-    def post(self, request):
-        serializer = CompanySerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return redirect("company-list")
-        else:
-            representantes = Representante.objects.all()
-            return render(
-                request,
-                "company/company_novo.html",
-                {"form": serializer, "representantes": representantes},
-            )
+@method_decorator(admin_required, name='dispatch')
+class CompanyListView(ListView):
+    model = Company
+    template_name = 'company/company_list.html'
 
 
-class CompanyUpdateView(APIView):
-
-    def get(self, request, pk, format=None):
-        company = Company.objects.get(pk=pk)
-        serializer = CompanySerializer(instance=company)
-        representantes = Representante.objects.all()
-        return render(
-            request,
-            "company/company_form.html",
-            {"form": serializer, "representantes": representantes, "company": company},
-        )
-
-    def post(self, request, pk):
-        company = Company.objects.get(pk=pk)
-        serializer = CompanySerializer(instance=company, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return redirect("company-list")
-        else:
-            representantes = Representante.objects.all()
-            return render(
-                request,
-                "company/company_form.html",
-                {
-                    "form": serializer,
-                    "representantes": representantes,
-                    "company": company,
-                },
-            )
+@method_decorator(admin_required, name='dispatch')
+class CompanyCreateView(CreateView):
+    model = Company
+    form_class = CompanyForm
+    template_name = 'company/company_form.html'
+    success_url = reverse_lazy('company-list')
 
 
-class RepresentanteListView(APIView):
-    def get(self, request, format=None):
-        representantes = Representante.objects.all()
-        return render(
-            request,
-            "representante/representante_list.html",
-            {"object_list": representantes},
-        )
+@method_decorator(admin_required, name='dispatch')
+class CompanyUpdateView(UpdateView):
+    model = Company
+    form_class = CompanyForm
+    template_name = 'company/company_form.html'
+    success_url = reverse_lazy('company-list')
 
 
-class RepresentanteCreateView(APIView):
-
-    def get(self, request, format=None):
-        serializer = RepresentanteSerializer()
-        return render(
-            request, "representante/representante_form.html", {"form": serializer}
-        )
-
-    def post(self, request):
-        serializer = RepresentanteSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return redirect("representante-list")
-        else:
-            return render(
-                request, "representante/representante_form.html", {"form": serializer}
-            )
+@method_decorator(admin_required, name='dispatch')
+class CompanyDeleteView(DeleteView):
+    model = Company
+    success_url = reverse_lazy('company-list')
 
 
-class RepresentanteUpdateView(APIView):
-
-    def get(self, request, pk, format=None):
-        representante = Representante.objects.get(pk=pk)
-        serializer = RepresentanteSerializer(instance=representante)
-        return render(
-            request,
-            "representante/representante_form.html",
-            {"form": serializer, "representante": representante},
-        )
-
-    def post(self, request, pk):
-        representante = Representante.objects.get(pk=pk)
-        serializer = RepresentanteSerializer(instance=representante, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return redirect("representante-list")
-        else:
-            return render(
-                request,
-                "representante/representante_form.html",
-                {"form": serializer, "representante": representante},
-            )
+@method_decorator(admin_required, name='dispatch')
+class RepresentanteListView(ListView):
+    model = Representante
+    template_name = 'representante/representante_list.html'
 
 
-class CompanyDeleteView(APIView):
-
-    def post(self, request, pk):
-        try:
-            company = Company.objects.get(pk=pk)
-            company.delete()
-            return redirect("company-list")
-        except Company.DoesNotExist:
-            return redirect("company-list")
+@method_decorator(admin_required, name='dispatch')
+class RepresentanteCreateView(CreateView):
+    model = Representante
+    form_class = RepresentanteForm
+    template_name = 'representante/representante_form.html'
+    success_url = reverse_lazy('representante-list')
 
 
-class RepresentanteDeleteView(APIView):
+@method_decorator(admin_required, name='dispatch')
+class RepresentanteUpdateView(UpdateView):
+    model = Representante
+    form_class = RepresentanteForm
+    template_name = 'representante/representante_form.html'
+    success_url = reverse_lazy('representante-list')
 
-    def post(self, request, pk):
-        try:
-            representante = Representante.objects.get(pk=pk)
-            representante.delete()
-            return redirect("representante-list")
-        except Representante.DoesNotExist:
-            return redirect("representante-list")
+
+@method_decorator(admin_required, name='dispatch')
+class RepresentanteDeleteView(DeleteView):
+    model = Representante
+    success_url = reverse_lazy('representante-list')
