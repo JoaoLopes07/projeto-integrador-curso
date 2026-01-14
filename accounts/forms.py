@@ -19,7 +19,6 @@ class CustomUserCreationForm(UserCreationForm):
     )
     
     telefone = forms.CharField(
-        max_length=20,
         required=False,
         widget=forms.TextInput(attrs={
             'class': 'form-control',
@@ -37,11 +36,3 @@ class CustomUserCreationForm(UserCreationForm):
         if User.objects.filter(email=email).exists():
             raise ValidationError('Este email já está em uso.')
         return email
-    
-    def save(self, commit=True):
-        """Salva o usuário e garante que o email seja definido"""
-        user = super().save(commit=False)
-        user.email = self.cleaned_data['email']
-        if commit:
-            user.save()
-        return user
