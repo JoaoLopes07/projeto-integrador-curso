@@ -101,7 +101,7 @@ class RepresentanteCreateView(APIView):
     def get(self, request, format=None):
         serializer = RepresentanteSerializer()
         return render(
-            request, "representante/representante_novo.html", {"form": serializer}
+            request, "representante/representante_form.html", {"form": serializer}
         )
 
     def post(self, request):
@@ -111,7 +111,7 @@ class RepresentanteCreateView(APIView):
             return redirect("representante-list")
         else:
             return render(
-                request, "representante/representante_novo.html", {"form": serializer}
+                request, "representante/representante_form.html", {"form": serializer}
             )
 
 
@@ -122,7 +122,7 @@ class RepresentanteUpdateView(APIView):
         serializer = RepresentanteSerializer(instance=representante)
         return render(
             request,
-            "representante/representante_editar.html",
+            "representante/representante_form.html",
             {"form": serializer, "representante": representante},
         )
 
@@ -135,7 +135,7 @@ class RepresentanteUpdateView(APIView):
         else:
             return render(
                 request,
-                "representante/representante_editar.html",
+                "representante/representante_form.html",
                 {"form": serializer, "representante": representante},
             )
 
