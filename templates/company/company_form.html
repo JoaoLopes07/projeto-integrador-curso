@@ -1,197 +1,92 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="register-container">
-    <h2>{% if company %}Editar Empresa{% else %}Criar Nova Empresa{% endif %}</h2>
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow mb-4 border-left-primary">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        {% if company %}
+                        <i class="fas fa-edit me-2"></i>Editar Empresa
+                        {% else %}
+                        <i class="fas fa-building me-2"></i>Nova Empresa
+                        {% endif %}
+                    </h6>
+                    <a href="{% url 'company-list' %}" class="btn btn-sm btn-light border">Cancelar</a>
+                </div>
 
-    {% if messages %}
-    <div class="messages">
-        {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}">
-            {{ message }}
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <h6 class="text-muted font-weight-bold text-uppercase small mb-3">Dados Principais</h6>
+                        <div class="row gx-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="small mb-1 font-weight-bold">CNPJ</label>
+                                <input type="text" name="cnpj" class="form-control"
+                                    value="{{ form.cnpj.value|default:'' }}" required>
+                                {{ form.cnpj.errors }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="small mb-1 font-weight-bold">Razão Social</label>
+                                <input type="text" name="razao_social" class="form-control"
+                                    value="{{ form.razao_social.value|default:'' }}" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="small mb-1 font-weight-bold">Nome Fantasia</label>
+                            <input type="text" name="nome_fantasia" class="form-control"
+                                value="{{ form.nome_fantasia.value|default:'' }}" required>
+                        </div>
+
+                        <h6 class="text-muted font-weight-bold text-uppercase small mt-4 mb-3">Contato e Endereço</h6>
+                        <div class="row gx-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="small mb-1 font-weight-bold">Email Corporativo</label>
+                                <input type="email" name="email_contato" class="form-control"
+                                    value="{{ form.email_contato.value|default:'' }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="small mb-1 font-weight-bold">Telefone</label>
+                                <input type="text" name="telefone" class="form-control"
+                                    value="{{ form.telefone.value|default:'' }}" required>
+                            </div>
+                        </div>
+
+                        <div class="row gx-3 mb-3">
+                            <div class="col-md-4">
+                                <label class="small mb-1 font-weight-bold">Cidade</label>
+                                <input type="text" name="cidade" class="form-control"
+                                    value="{{ form.cidade.value|default:'' }}" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="small mb-1 font-weight-bold">Estado (UF)</label>
+                                <input type="text" name="estado" class="form-control"
+                                    value="{{ form.estado.value|default:'' }}" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="small mb-1 font-weight-bold">CEP</label>
+                                <input type="text" name="cep" class="form-control"
+                                    value="{{ form.cep.value|default:'' }}" required>
+                            </div>
+                        </div>
+
+                        <div class="d-none">
+                            <input type="text" name="endereco" value="{{ form.endereco.value|default:'-' }}">
+                            <input type="text" name="numero" value="{{ form.numero.value|default:'0' }}">
+                            <input type="text" name="bairro" value="{{ form.bairro.value|default:'-' }}">
+                        </div>
+
+                        <hr class="my-4">
+                        <button type="submit" class="btn btn-primary w-100 shadow-sm">
+                            <i class="fas fa-save me-2"></i>Salvar Dados
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
-        {% endfor %}
     </div>
-    {% endif %}
-
-    <form method="post">
-        {% csrf_token %}
-
-        <div class="form-group">
-            <label for="id_cnpj">CNPJ da empresa:</label>
-            <input type="text" name="cnpj" id="id_cnpj"
-                class="form-control {% if form.cnpj.errors %}is-invalid{% endif %}" required autofocus
-                value="{{ form.cnpj.value|default:'' }}">
-            {% if form.cnpj.errors %}
-            <div class="text-danger small">
-                {% for error in form.cnpj.errors %}
-                {{ error }}
-                {% endfor %}
-            </div>
-            {% endif %}
-        </div>
-
-        <div class="form-group">
-            <label for="id_nome_fantasia">Nome Fantasia da empresa:</label>
-            <input type="text" name="nome_fantasia" id="id_nome_fantasia"
-                class="form-control {% if form.nome_fantasia.errors %}is-invalid{% endif %}" required
-                value="{{ form.nome_fantasia.value|default:'' }}">
-            {% if form.nome_fantasia.errors %}
-            <div class="text-danger small">
-                {% for error in form.nome_fantasia.errors %}
-                {{ error }}
-                {% endfor %}
-            </div>
-            {% endif %}
-        </div>
-
-        <div class="form-group">
-            <label for="id_razao_social">Razão Social da empresa:</label>
-            <input type="text" name="razao_social" id="id_razao_social"
-                class="form-control {% if form.razao_social.errors %}is-invalid{% endif %}" required
-                value="{{ form.razao_social.value|default:'' }}">
-            {% if form.razao_social.errors %}
-            <div class="text-danger small">
-                {% for error in form.razao_social.errors %}
-                {{ error }}
-                {% endfor %}
-            </div>
-            {% endif %}
-        </div>
-
-        <div class="form-group">
-            <label for="id_email_contato">Email de contato da empresa:</label>
-            <input type="email" name="email_contato" id="id_email_contato"
-                class="form-control {% if form.email_contato.errors %}is-invalid{% endif %}" required
-                value="{{ form.email_contato.value|default:'' }}">
-            {% if form.email_contato.errors %}
-            <div class="text-danger small">
-                {% for error in form.email_contato.errors %}
-                {{ error }}
-                {% endfor %}
-            </div>
-            {% endif %}
-        </div>
-
-        <div class="form-group">
-            <label for="id_telefone">Telefone da empresa:</label>
-            <input type="text" name="telefone" id="id_telefone"
-                class="form-control {% if form.telefone.errors %}is-invalid{% endif %}" required
-                value="{{ form.telefone.value|default:'' }}">
-            {% if form.telefone.errors %}
-            <div class="text-danger small">
-                {% for error in form.telefone.errors %}
-                {{ error }}
-                {% endfor %}
-            </div>
-            {% endif %}
-        </div>
-
-        <div class="form-group">
-            <label for="id_site">Site da empresa:</label>
-            <input type="url" name="site" id="id_site"
-                class="form-control {% if form.site.errors %}is-invalid{% endif %}" required
-                value="{{ form.site.value|default:'' }}">
-            {% if form.site.errors %}
-            <div class="text-danger small">
-                {% for error in form.site.errors %}
-                {{ error }}
-                {% endfor %}
-            </div>
-            {% endif %}
-        </div>
-
-        <div class="form-group">
-            <label for="id_cep">CEP da empresa:</label>
-            <input type="text" name="cep" id="id_cep" 
-                   class="form-control {% if form.cep.errors %}is-invalid{% endif %}"
-                   required value="{{ form.cep.value|default:'' }}">
-            {% if form.cep.errors %}
-            <div class="text-danger small">{% for error in form.cep.errors %}{{ error }}{% endfor %}</div>
-            {% endif %}
-        </div>
-
-        <div class="form-group">
-            <label for="id_endereco">Endereço da empresa:</label>
-            <input type="text" name="endereco" id="id_endereco"
-                class="form-control {% if form.endereco.errors %}is-invalid{% endif %}" required
-                value="{{ form.endereco.value|default:'' }}">
-            {% if form.endereco.errors %}
-            <div class="text-danger small">{% for error in form.endereco.errors %}{{ error }}{% endfor %}</div>
-            {% endif %}
-        </div>
-
-        <div class="form-group">
-            <label for="id_numero">Número da empresa:</label>
-            <input type="text" name="numero" id="id_numero"
-                class="form-control {% if form.numero.errors %}is-invalid{% endif %}" required
-                value="{{ form.numero.value|default:'' }}">
-            {% if form.numero.errors %}
-            <div class="text-danger small">{% for error in form.numero.errors %}{{ error }}{% endfor %}</div>
-            {% endif %}
-        </div>
-
-        <div class="form-group">
-            <label for="id_complemento">Complemento da empresa:</label>
-            <input type="text" name="complemento" id="id_complemento"
-                class="form-control {% if form.complemento.errors %}is-invalid{% endif %}"
-                value="{{ form.complemento.value|default:'' }}">
-            {% if form.complemento.errors %}
-            <div class="text-danger small">{% for error in form.complemento.errors %}{{ error }}{% endfor %}</div>
-            {% endif %}
-        </div>
-
-        <div class="form-group">
-            <label for="id_bairro">Bairro da empresa:</label>
-            <input type="text" name="bairro" id="id_bairro"
-                class="form-control {% if form.bairro.errors %}is-invalid{% endif %}" required
-                value="{{ form.bairro.value|default:'' }}">
-            {% if form.bairro.errors %}
-            <div class="text-danger small">{% for error in form.bairro.errors %}{{ error }}{% endfor %}</div>
-            {% endif %}
-        </div>
-
-        <div class="form-group">
-            <label for="id_cidade">Cidade da empresa:</label>
-            <input type="text" name="cidade" id="id_cidade"
-                class="form-control {% if form.cidade.errors %}is-invalid{% endif %}" required
-                value="{{ form.cidade.value|default:'' }}">
-            {% if form.cidade.errors %}
-            <div class="text-danger small">{% for error in form.cidade.errors %}{{ error }}{% endfor %}</div>
-            {% endif %}
-        </div>
-
-        <div class="form-group">
-            <label for="id_estado">Estado da empresa:</label>
-            <input type="text" name="estado" id="id_estado"
-                class="form-control {% if form.estado.errors %}is-invalid{% endif %}" required
-                value="{{ form.estado.value|default:'' }}">
-            {% if form.estado.errors %}
-            <div class="text-danger small">{% for error in form.estado.errors %}{{ error }}{% endfor %}</div>
-            {% endif %}
-        </div>
-
-        <div class="form-group">
-            <label for="id_representante">Representante da empresa:</label>
-            <select name="representante" class="form-control">
-                <option value="">Selecione um representante</option>
-                {% for representante in representantes %}
-                <option value="{{ representante.id }}" 
-                    {% if company and company.representante_id == representante.id %} selected {% endif %}>
-                    {{ representante.nome_completo }}
-                </option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <button type="submit" class="btn btn-primary">
-            {% if company %}
-                <i class="fas fa-save"></i> Salvar Alterações
-            {% else %}
-                <i class="fas fa-plus-circle"></i> Criar Empresa
-            {% endif %}
-        </button>
-
-    </form>
 </div>
 {% endblock %}
