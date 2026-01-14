@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h1>Responsáveis Cadastrados</h1>
+        <a href="{% url 'representante-create' %}" class="btn btn-primary">Adicionar Novo</a>
+    </div>
+
+    {% if object_list %}
+    <div style="overflow-x: auto;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome Completo</th>
+                    <th>CPF</th>
+                    <th>Email</th>
+                    <th>Telefone</th>
+                    <th>Nick Discord</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for representante in object_list %}
+                <tr>
+                    <td><strong>{{ representante.nome_completo }}</strong></td>
+                    <td>{{ representante.cpf }}</td>
+                    <td>{{ representante.email }}</td>
+                    <td>{{ representante.telefone }}</td>
+                    <td>{{ representante.nick_discord }}</td>
+                    <td>
+                        <a href="{% url 'representante-update' representante.pk %}"
+                            class="btn btn-sm btn-outline-primary">Editar</a>
+                        <form method="post" action="{% url 'representante-delete' representante.pk %}"
+                            style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-outline-danger"
+                                onclick="return confirm('Tem certeza que deseja deletar o representante {{ representante.nome_completo }}?')">
+                                Deletar
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div style="text-align: center; padding: 3rem;">
+        <p style="color: var(--text-secondary); margin-bottom: 1rem;">Nenhum responsável cadastrado ainda.</p>
+        <a href="{% url 'representante-create' %}" class="btn btn-primary">Cadastre o primeiro</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

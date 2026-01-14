@@ -53,7 +53,7 @@
 
 <div class="custom-dashboard">
     <h1>🏠 Dashboard do Sistema</h1>
-    
+
     <div class="stat-cards">
         <div class="stat-card">
             <h3>Usuários Registrados</h3>
@@ -72,14 +72,12 @@
             <p>R$ {{ monthly_sales|floatformat:2 }}</p>
         </div>
     </div>
-    
     <div class="quick-actions">
-        <a href="/admin/auth/user/add/">➕ Novo Usuário</a>
-        <a href="/admin/meuapp/produto/add/">🛒 Novo Produto</a>
+        <a href="/admin/register/">➕ Novo Usuário</a>
+        <a href="/company/"> Nova company </a>
         <a href="/admin/meuapp/pedido/add/">📝 Novo Pedido</a>
     </div>
 </div>
-
 
 {{ block.super }}
 {% endblock %}
