@@ -155,7 +155,7 @@
         <div class="form-group">
             <label for="id_complemento">Complemento da empresa:</label>
             <input type="text" name="complemento" id="id_complemento"
-                class="form-control {% if form.complemento.errors %}is-invalid{% endif %}" required autofocus
+                class="form-control {% if form.complemento.errors %}is-invalid{% endif %}" autofocus
                 value="{{ form.complemento.value|default:'' }}">
             {% if form.complemento.errors %}
             <div class="text-danger small">
