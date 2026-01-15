@@ -1,56 +1,82 @@
-from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from django.views.generic import ListView, CreateView, UpdateView, DetailView
+from django.urls import reverse_lazy
+from django.shortcuts import redirect
+
 from .models import Project
+from .forms import ProjectForm
 from companies.models import Company
 
-@login_required
-def project_list(request):
-    user = request.user
 
-    if user.is_staff:
-        projects = Project.objects.all()
-    else:
-        projects = Project.objects.filter(company=user.company)
-
-    return render(request, 'projects/list.html', {'projects': projects})
+def is_admin(user):
+    return user.is_superuser or user.is_staff
 
 
-@login_required
-def project_detail(request, pk):
-    project = get_object_or_404(Project, pk=pk)
+@method_decorator(login_required, name='dispatch')
+class ProjectListView(ListView):
+    model = Project
+    template_name = 'projects/project_list.html'
 
-    if not request.user.is_staff and project.company != request.user.company:
-        return redirect('project_list')
+    def get_queryset(self):
+        user = self.request.user
 
-    return render(request, 'projects/detail.html', {'project': project})
+        if is_admin(user):
+            return Project.objects.all()
 
-
-@login_required
-def project_create(request):
-    if request.method == 'POST':
-        Project.objects.create(
-            name=request.POST['name'],
-            description=request.POST['description'],
-            status=request.POST['status'],
-            company=request.user.company
+        return Project.objects.filter(
+            company__representante__email=user.email
         )
-        return redirect('project_list')
-
-    return render(request, 'projects/create.html')
 
 
-@login_required
-def project_update(request, pk):
-    project = get_object_or_404(Project, pk=pk)
+@method_decorator(login_required, name='dispatch')
+class ProjectCreateView(CreateView):
+    model = Project
+    form_class = ProjectForm
+    template_name = 'projects/project_form.html'
+    success_url = reverse_lazy('project-list')
 
-    if not request.user.is_staff and project.company != request.user.company:
-        return redirect('project_list')
+    def form_valid(self, form):
+        user = self.request.user
 
-    if request.method == 'POST':
-        project.name = request.POST['name']
-        project.description = request.POST['description']
-        project.status = request.POST['status']
-        project.save()
-        return redirect('project_detail', pk=pk)
+        if not is_admin(user):
+            company = Company.objects.filter(
+                representante__email=user.email
+            ).first()
+            form.instance.company = company
 
-    return render(request, 'projects/edit.html', {'project': project})
+        return super().form_valid(form)
+
+
+@method_decorator(login_required, name='dispatch')
+class ProjectDetailView(DetailView):
+    model = Project
+    template_name = 'projects/project_detail.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        project = self.get_object()
+        user = request.user
+
+        if not is_admin(user):
+            if project.company.representante.email != user.email:
+                return redirect('project-list')
+
+        return super().dispatch(request, *args, **kwargs)
+
+
+@method_decorator(login_required, name='dispatch')
+class ProjectUpdateView(UpdateView):
+    model = Project
+    form_class = ProjectForm
+    template_name = 'projects/project_form.html'
+    success_url = reverse_lazy('project-list')
+
+    def dispatch(self, request, *args, **kwargs):
+        project = self.get_object()
+        user = request.user
+
+        if not is_admin(user):
+            if project.company.representante.email != user.email:
+                return redirect('project-list')
+
+        return super().dispatch(request, *args, **kwargs)
