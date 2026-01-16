@@ -3,7 +3,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import ListView, CreateView, UpdateView, DetailView
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
-
+from django.contrib import messages
 from .models import Project
 from .forms import ProjectForm
 from companies.models import Company
@@ -17,6 +17,7 @@ def is_admin(user):
 class ProjectListView(ListView):
     model = Project
     template_name = 'projects/project_list.html'
+    context_object_name = "projects"
 
     def get_queryset(self):
         user = self.request.user
@@ -34,7 +35,7 @@ class ProjectCreateView(CreateView):
     model = Project
     form_class = ProjectForm
     template_name = 'projects/project_form.html'
-    success_url = reverse_lazy('project-list')
+    success_url = reverse_lazy('project_list')
 
     def form_valid(self, form):
         user = self.request.user
@@ -43,9 +44,18 @@ class ProjectCreateView(CreateView):
             company = Company.objects.filter(
                 representante__email=user.email
             ).first()
+
+            if company is None:
+                messages.error(
+                    self.request,
+                    "Você não tem uma empresa vinculada. Solicite à diretoria/admin para vincular sua empresa antes de cadastrar projetos."
+                )
+                return redirect('project_list')
+
             form.instance.company = company
 
         return super().form_valid(form)
+
 
 
 @method_decorator(login_required, name='dispatch')
@@ -58,8 +68,10 @@ class ProjectDetailView(DetailView):
         user = request.user
 
         if not is_admin(user):
-            if project.company.representante.email != user.email:
-                return redirect('project-list')
+            representante = project.company.representante
+            if representante is None or representante.email != user.email:
+                messages.error(request, "Você não tem permissão para acessar este projeto.")
+                return redirect('project_list')
 
         return super().dispatch(request, *args, **kwargs)
 
@@ -69,14 +81,16 @@ class ProjectUpdateView(UpdateView):
     model = Project
     form_class = ProjectForm
     template_name = 'projects/project_form.html'
-    success_url = reverse_lazy('project-list')
+    success_url = reverse_lazy('project_list')
 
     def dispatch(self, request, *args, **kwargs):
         project = self.get_object()
         user = request.user
 
         if not is_admin(user):
-            if project.company.representante.email != user.email:
-                return redirect('project-list')
+            representante = project.company.representante
+            if representante is None or representante.email != user.email:
+                messages.error(request, "Você não tem permissão para editar este projeto.")
+                return redirect('project_list')
 
         return super().dispatch(request, *args, **kwargs)
