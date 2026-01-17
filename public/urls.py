@@ -6,3 +6,4 @@ app_name = "public"
 urlpatterns = [
     path("", landing, name="landing"),
 ]
+ 
