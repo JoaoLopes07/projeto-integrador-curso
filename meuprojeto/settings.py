@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'companies',
     'projects',
     'surveys',
+    'public',
 ]
 
 MIDDLEWARE = [

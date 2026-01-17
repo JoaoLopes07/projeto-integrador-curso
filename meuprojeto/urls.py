@@ -9,7 +9,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include("accounts.urls")),
     path("login/", RedirectView.as_view(url="/accounts/login/", permanent=True)),
-    path("", RedirectView.as_view(url="/accounts/login/", permanent=False)),
+    path("", include("public.urls")),
     path(
         "accounts/password_reset/",
         auth_views.PasswordResetView.as_view(
