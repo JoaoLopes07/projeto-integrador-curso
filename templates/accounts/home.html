@@ -19,6 +19,12 @@
                     <a href="{% url 'profile' %}" class="btn btn-outline-secondary btn-lg px-4">
                         <i class="fas fa-user-cog me-2"></i>Meu Perfil
                     </a>
+                    
+                    {% if user.is_authenticated and user.role == 'diretoria' %}
+                        <a href="{% url 'dashboard_diretoria' %}" class="btn btn-dark btn-lg px-4">
+                            <i class="fas fa-chart-line me-2"></i>Dashboard Diretoria
+                        </a>
+                    {% endif %}
                 </div>
             </div>
             <div class="col-lg-4 d-none d-lg-block text-end">
