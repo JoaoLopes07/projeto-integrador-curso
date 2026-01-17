@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Diretoria{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Dashboard da Diretoria</h2>
+  <p class="text-muted">Central de gestão para liberar e administrar acessos.</p>
+
+  <div class="row mt-4 g-3">
+    <div class="col-md-4">
+      <div class="card p-3 h-100">
+        <h5>Empresas</h5>
+        <p>Gerenciar empresas cadastradas.</p>
+        <a class="btn btn-primary" href="{% url 'company-list' %}">Abrir</a>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card p-3 h-100">
+        <h5>Representantes</h5>
+        <p>Vincular/editar representantes das empresas.</p>
+        <a class="btn btn-primary" href="{% url 'representante-list' %}">Abrir</a>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card p-3 h-100">
+        <h5>Projetos</h5>
+        <p>Visualizar e administrar projetos.</p>
+        <a class="btn btn-primary" href="{% url 'project_list' %}">Abrir</a>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card p-3 h-100">
+        <h5>Pesquisas</h5>
+        <p>Acessar área de surveys.</p>
+        <a class="btn btn-primary" href="/pesquisa/">Abrir</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

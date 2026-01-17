@@ -8,6 +8,7 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include("accounts.urls")),
+    path("redirect/", include("core.urls")),
     path("login/", RedirectView.as_view(url="/accounts/login/", permanent=True)),
     path("", include("public.urls")),
     path(
@@ -40,7 +41,8 @@ urlpatterns = [
     ),
     path("company/", include("companies.urls")),
     path("projects/", include("projects.urls")),
-    path("pesquisa/", include("surveys.urls")),
+    path("pesquisa/", include(("surveys.urls", "surveys"), namespace="surveys")),
+
 ]
 
 if settings.DEBUG:

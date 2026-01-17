@@ -4,15 +4,12 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from .models import Company, Representante
 from .forms import CompanyForm, RepresentanteForm
-
-
-def is_admin_or_superuser(user):
-    return user.is_superuser or user.is_staff
+from core.permissions import can_manage_companies
 
 
 admin_required = [
     login_required,
-    user_passes_test(is_admin_or_superuser, login_url='/accounts/home/')
+    user_passes_test(can_manage_companies, login_url='/accounts/home/')
 ]
 
 
