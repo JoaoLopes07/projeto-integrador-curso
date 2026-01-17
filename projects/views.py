@@ -7,7 +7,7 @@ from django.contrib import messages
 from .models import Project
 from .forms import ProjectForm
 from companies.models import Company
-from core.permissions import can_manage_projects, can_access_projects_area, is_associado
+from core.permissions import can_manage_projects, can_access_projects_area
 
 def get_user_company(user):
     return Company.objects.filter(representante__email=user.email).first()
