@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Histórico de Respostas{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Histórico de Respostas</h2>
+
+  {% if responses %}
+    <table class="table table-striped mt-3">
+      <thead>
+        <tr>
+          <th>Ano</th>
+          <th>Enviado em</th>
+          {% if request.user.role == "diretoria" %}
+            <th>Usuário</th>
+            <th>Role</th>
+          {% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in responses %}
+          <tr>
+            <td>{{ r.survey_year.year }}</td>
+            <td>{{ r.submitted_at|date:"d/m/Y H:i" }}</td>
+            {% if request.user.role == "diretoria" %}
+              <td>{{ r.user.email }}</td>
+              <td>{{ r.user.role }}</td>
+            {% endif %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="text-muted mt-3">Nenhuma resposta encontrada.</p>
+  {% endif %}
+</div>
+{% endblock %}
