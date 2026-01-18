@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Mapa de Empresas | ACJOGOS{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="fw-bold">Mapa do Ecossistema</h1>
+        <p class="text-muted">Localize estúdios e empresas associadas no Estado do Rio de Janeiro.</p>
+    </div>
+
+    <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="card-body p-0">
+            <div id="map" style="height: 600px; width: 100%;"></div>
+        </div>
+    </div>
+
+    <div class="mt-4 text-center">
+        <a href="{% url 'public:landing' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Voltar
+        </a>
+    </div>
+</div>
+
+{{ empresas_json|json_script:"dados-empresas" }}
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var map = L.map('map').setView([-22.9068, -43.1729], 8);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        var redIcon = L.icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
+
+        var scriptTag = document.getElementById('dados-empresas');
+        if (scriptTag) {
+            var empresas = JSON.parse(scriptTag.textContent);
+
+            empresas.forEach(function (empresa) {
+                if (empresa.lat && empresa.lng) {
+
+                    var marker = L.marker([empresa.lat, empresa.lng], { icon: redIcon }).addTo(map);
+
+                    var popupContent = `
+                        <div style="text-align:center;">
+                            <strong>${empresa.nome}</strong><br>
+                            <span class="text-muted small">${empresa.cidade}</span><br>
+                            ${empresa.url !== '#' ? `<a href="${empresa.url}" target="_blank" class="btn btn-sm btn-primary mt-2">Visitar Site</a>` : ''}
+                        </div>
+                    `;
+
+                    marker.bindPopup(popupContent);
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
