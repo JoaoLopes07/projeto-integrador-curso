@@ -24,3 +24,11 @@ class SurveyResponseForm(forms.ModelForm):
             }),
         }
         
+class SurveyResponseAfiliadoForm(forms.ModelForm):
+    class Meta:
+        model = SurveyResponse
+        fields = ["main_difficulty"]
+        widgets = {
+            "main_difficulty": forms.Textarea(attrs={"class": "form-control", "rows": 4}),
+        }        
+        

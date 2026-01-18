@@ -29,10 +29,15 @@ class SurveyResponse(models.Model):
     # Campos iniciais da pesquisa (podem evoluir depois)
     company_size = models.CharField(
         max_length=100,
+        blank=True, 
+        null=True,
         verbose_name="Porte da empresa"
+        
     )
     annual_revenue = models.CharField(
         max_length=100,
+        blank=True,
+        null=True,
         verbose_name="Faturamento anual"
     )
     main_difficulty = models.TextField(
