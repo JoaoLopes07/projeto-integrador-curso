@@ -1,178 +1,137 @@
 ## 📋 Sobre o Projeto
-Sistema web desenvolvido em Django com arquitetura modular, focado em autenticação de usuários e controle de acesso baseado em perfis. O projeto implementa um sistema robusto de gerenciamento com separação clara entre funcionalidades públicas, de usuários autenticados e administrativas.
 
-## 🎯 Tecnologias Utilizadas
+Sistema web desenvolvido em **Django**, com arquitetura modular por aplicativos (apps), focado em **autenticação**, **gestão de empresas**, **projetos**, **pesquisas (surveys)** e **informações de acesso públiuco (public)**.
 
-Python 
+Este repositório representa o **projeto oficial do grupo**, com decisões arquiteturais já consolidadas e evolução contínua do código.
 
-Django 
+---
 
-HTML/CSS (templates Django)
+## 🎯 Objetivo do Projeto
 
-SQLite/PostgreSQL (banco de dados)
+O projeto tem como objetivo aplicar, de forma prática:
 
-Django Authentication System
+- Organização de projetos Django em equipe
+- Boas práticas de versionamento com Git/GitHub
+- Separação clara de responsabilidades por app
+- Controle de acesso e permissões
+- Padronização de templates, URLs e estrutura do projeto
 
-## 🚀 Sprint 1 - Autenticação e Usuários (Concluída)
+---
 
-## ✅ Funcionalidades Implementadas
+## 🧩 Apps do Projeto
+```
+accounts/ → autenticação, login, cadastro e perfil de usuário
+companies/ → gestão de empresas e representantes
+projects/ → gestão de projetos vinculados a empresas
+surveys/ → pesquisas e formulários
+templates/ → templates HTML centralizados
+static/ → arquivos estáticos (CSS)
+```
+---
 
-# 1. Estrutura do Projeto
+## 🛠️ Tecnologias Utilizadas
 
-> Criação do app accounts separado do projeto principal (meuprojeto)
+- Python
+- Django
+- HTML / CSS (templates Django)
+- SQLite (desenvolvimento)
+- Git e GitHub (versionamento em equipe)
 
-> Configuração de URLs modularizadas
+---
 
-> Separação lógica entre views de autenticação e views do app
+## 🚀 Como rodar o projeto localmente
 
-# 2. Modelo de Usuário
-
-> Sistema de permissões e grupos
-
-> Diferenciação entre usuários comuns e administradores
-
-# 3. Sistema de Autenticação
-
-> Login personalizado (/accounts/login/)
->
-> Registro de novos usuários (/accounts/register/)
->
-> Logout seguro (/accounts/logout/)
-
-> Redirecionamento automático baseado no tipo de usuário
-
-# 4. Recuperação de Senha
-
-> Sistema completo de reset de senha
->
-> Templates personalizados para cada etapa:
->
-> Solicitação de reset
->
-> Confirmação de envio
->
-> Formulário de nova senha
->
-> Confirmação de conclusão
-
-# 5. URLs Implementadas
-> Públicas (não requerem autenticação):
-> /accounts/login/ - Página de login
->
-> /accounts/register/ - Registro de novos usuários
->
-> /accounts/password_reset/ - Solicitar reset de senha
->
-> Privadas (requerem autenticação):
-> /accounts/logout/ - Encerrar sessão
->
-> /accounts/home/ - Página inicial após login
->
-> /accounts/profile/ - Perfil do usuário
->
-> Administrativas:
-> /admin/ - Painel de administração do Django
->
-> URLs para gerenciamento de usuários através do admin nativo
-
-# 6. Redirecionamentos Inteligentes
-
-> Redirecionamento de /login/ para /accounts/login/ (permanente)
->
-> Redirecionamento pós-login baseado no tipo de usuário
->
-> Fluxo seguro para páginas protegidas
-
-## 🔒 Sistema de Segurança
->   Autenticação segura usando sessões Django
->
->    Proteção contra CSRF
->
->   Views protegidas com decorators @login_required
->
->   Senhas hasheadas com algoritmos seguros
->
->  Tokens únicos para recuperação de senha
-
-# 🎨 Templates e Interface
-
->Templates personalizados para autenticação
->
->Layouts responsivos
->
->Mensagens de feedback para o usuário
->
->Formulários com validação client-side e server-side
-
-# 📁 Estrutura de URLs Principais
-
-# URLs públicas
-
-> path('accounts/login/', ...)      # Login
-> path('accounts/register/', ...)   # Registro
-
-# URLs protegidas
-
-> path('accounts/logout/', ...)     # Logout
-> path('accounts/home/', ...)       # Home
-> path('accounts/profile/', ...)    # Perfil
-
-# URLs administrativas
-
-> path('admin/', ...)               # Admin Django
-> (Futuro: painel admin customizado)
-
-## 🔄 Fluxo de Autenticação
-
-> Usuário não autenticado: Acesso apenas a login e registro
-
-> Login bem-sucedido: Redirecionamento para /accounts/home/
-
-> Usuário comum: Acesso a home e perfil
-
-> Administrador: Acesso adicional ao painel /admin/
-
-> Logout: Encerra sessão e redireciona para login
-
-## 🛠️ Configuração e Instalação
->bash
-> #Clonar repositório
->git clone [url-do-repositorio]
->
-> #Instalar dependências
->pip install -r requirements.txt
->
-> #Configurar banco de dados
->python manage.py migrate
->
-> #Criar superusuário
->python manage.py createsuperuser
->
-># Executar servidor
-> python manage.py runserver
->
-
-## 📈 Próximas Sprints (Planejadas)
-
-## Sprint 2: 
-
-> Criar app companies<br>
-> Criar model Company<br>
-> CRUD básico de empresas<br>
-> Criar página pública simples de empresas<br>
+### 1. Clonar o repositório
 
 
-## Sprint 3:
+**git clone** https://github.com/JoaoLopes07/projeto-integrador-curso.git
 
-> Criar app projects<br>
-> Criar model Project<br>
-> CRUD básico de projetos<br>
+**cd** projeto-integrador-curso
+
+### 2. Criar e ativar ambiente virtual
+
+ **Windows**
+
+- python -m venv venv
+- venv\Scripts\activate
+
+**Linux / macOS**
+
+- python -m venv venv
+- source venv/bin/activate
+
+### 3. Instalar dependências
+
+- pip install -r requirements.txt
+
+### 4. Aplicar migrações e criar superusuário
+
+- python manage.py migrate
+- python manage.py createsuperuser
+
+### 5. Rodar o servidor
+
+- python manage.py runserver
+
+### Acesse no navegador:
+
+- http://localhost:8000/
 
 
-## Sprint 4:
+## 📐 Padrões e Decisões do Projeto
 
->Criar app surveys<br>
->Criar modelos SurveyYear e SurveyResponse<br>
->Criar formulário de pesquisa anual<br>
->Configuração de permissões por tipo de usuário<br>
->Criação do layout base com Bootstrap<br>
+Esta seção documenta decisões técnicas já fechadas pela equipe, para manter consistência no desenvolvimento.
+
+📁 Templates
+Todos os templates ficam centralizados na pasta raiz templates/
+
+Os apps não possuem pasta de templates própria
+
+Uso de:
+
+- base.html como template base
+
+- {% include %} para componentes reutilizáveis
+
+- {% block %} para extensões de layout
+
+### 🌐 URLs
+
+- Cada app possui seu próprio `urls.py`
+- As URLs são organizadas por **namespace (`app_name`)**
+- Prefixos definidos:
+  - `/` → public (páginas públicas / landing)
+  - `accounts/` → autenticação
+  - `companies/` → empresas
+  - `projects/` → projetos
+  - `pesquisa/` → surveys
+
+
+
+### 🧠 Views e Permissões
+
+Uso de Class Based Views (CBVs) sempre que possível
+
+Proteção de views com:
+
+- @login_required
+
+- validações manuais de permissão quando necessário
+
+- Usuários da diretoria/admin possuem permissões amplas
+
+- Usuários representantes têm acesso restrito aos dados da sua empresa
+
+### 🏢 Relação Usuário ↔ Empresa
+
+- Um usuário pode estar vinculado a uma empresa 
+
+- Diretoria/admin não depende de vínculo com empresa
+
+- Lógicas de acesso sempre consideram a possibilidade de:
+
+- company ser None
+
+- representante ser None
+
+**(Esses casos devem ser tratados para evitar erros e exibir mensagens amigáveis.)**
