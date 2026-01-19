@@ -62,12 +62,10 @@ def diretorio(request):
     for loc in locations:
         uf = loc["estado"]
         cid = loc["cidade"]
-
         todos_estados.add(uf)
 
         if uf not in mapa_cidades:
             mapa_cidades[uf] = []
-
         if cid not in mapa_cidades[uf]:
             mapa_cidades[uf].append(cid)
 
@@ -87,6 +85,7 @@ def diretorio(request):
 
 
 def estatisticas(request):
+
     total_companies = Company.objects.count()
     total_projects = Project.objects.count()
 
@@ -96,13 +95,13 @@ def estatisticas(request):
         .order_by("-total", "estado")
     )
 
-    companies_por_cidade = (
+    companies_por_cidade = list(
         Company.objects.values("cidade")
         .annotate(total=Count("id"))
         .order_by("-total", "cidade")[:20]
     )
 
-    projects_por_status = (
+    projects_por_status = list(
         Project.objects.values("status")
         .annotate(total=Count("id"))
         .order_by("-total", "status")

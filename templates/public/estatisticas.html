@@ -123,6 +123,14 @@
     font-weight: bold;
     font-size: 0.9rem;
   }
+
+
+  .empty-chart-msg {
+    color: #666;
+    text-align: center;
+    font-size: 0.9rem;
+    margin: auto;
+  }
 </style>
 
 <div class="container py-5">
@@ -171,6 +179,10 @@
         <h4 class="chart-title"><i class="fas fa-tasks"></i> Status dos Projetos</h4>
         <div style="flex-grow: 1; position: relative; display: flex; align-items: center; justify-content: center;">
           <canvas id="statusChart"></canvas>
+          <div id="statusEmpty" class="empty-chart-msg d-none">
+            <i class="fas fa-chart-pie fa-3x mb-2 opacity-25"></i><br>
+            Nenhum projeto cadastrado
+          </div>
         </div>
       </div>
     </div>
@@ -201,75 +213,88 @@
   </div>
 </div>
 
+{{ companies_por_cidade|json_script:"city-data" }}
+{{ projects_por_status|json_script:"status-data" }}
+
 <script>
-
-  Chart.defaults.color = '#888';
-  Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.05)';
+  document.addEventListener("DOMContentLoaded", function () {
 
 
-  const cityLabels = [{% for item in companies_por_cidade %}"{{ item.cidade|escapejs }}", {% endfor %}];
-  const cityData = [{% for item in companies_por_cidade %}{{ item.total }},{% endfor %}];
-
-  const ctxCity = document.getElementById('cityChart').getContext('2d');
-  new Chart(ctxCity, {
-    type: 'bar',
-    data: {
-      labels: cityLabels,
-      datasets: [{
-        label: 'Empresas',
-        data: cityData,
-        backgroundColor: 'rgba(167, 66, 245, 0.6)', // Roxo Neon
-        borderColor: '#a742f5',
-        borderWidth: 1,
-        borderRadius: 5,
-        hoverBackgroundColor: '#a742f5'
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false }
-      },
-      scales: {
-        y: { beginAtZero: true, grid: { color: 'rgba(255, 255, 255, 0.05)' } },
-        x: { grid: { display: false } }
-      }
+    function capitalize(str) {
+      if (!str) return '';
+      return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
     }
-  });
 
 
-  const statusLabels = [{% for item in projects_por_status %}"{{ item.status|title|escapejs }}", {% endfor %}];
-  const statusData = [{% for item in projects_por_status %}{{ item.total }}, {% endfor %}];
+    const rawCityData = JSON.parse(document.getElementById('city-data').textContent);
+    const rawStatusData = JSON.parse(document.getElementById('status-data').textContent);
 
-  const ctxStatus = document.getElementById('statusChart').getContext('2d');
-  new Chart(ctxStatus, {
-    type: 'doughnut',
-    data: {
-      labels: statusLabels,
-      datasets: [{
-        data: statusData,
-        backgroundColor: [
-          '#2dce89',
-          '#a742f5',
-          '#FF6B6B',
-          '#11cdef',
-          '#fb6340'
-        ],
-        borderWidth: 0,
-        hoverOffset: 10
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          position: 'right',
-          labels: { color: '#fff', padding: 20 }
-        }
+
+    Chart.defaults.color = '#888';
+    Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.05)';
+
+
+    const ctxCity = document.getElementById('cityChart').getContext('2d');
+    new Chart(ctxCity, {
+      type: 'bar',
+      data: {
+        labels: rawCityData.map(item => item.cidade),
+        datasets: [{
+          label: 'Empresas',
+          data: rawCityData.map(item => item.total),
+          backgroundColor: 'rgba(167, 66, 245, 0.6)',
+          borderColor: '#a742f5',
+          borderWidth: 1,
+          borderRadius: 5,
+          hoverBackgroundColor: '#a742f5'
+        }]
       },
-      cutout: '70%'
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true, grid: { color: 'rgba(255, 255, 255, 0.05)' } },
+          x: { grid: { display: false } }
+        }
+      }
+    });
+
+
+    const ctxStatus = document.getElementById('statusChart').getContext('2d');
+    const statusEmptyMsg = document.getElementById('statusEmpty');
+
+
+    if (rawStatusData.length > 0) {
+      new Chart(ctxStatus, {
+        type: 'doughnut',
+        data: {
+          labels: rawStatusData.map(item => capitalize(item.status)),
+          datasets: [{
+            data: rawStatusData.map(item => item.total),
+            backgroundColor: [
+              '#2dce89', '#a742f5', '#FF6B6B', '#11cdef', '#fb6340'
+            ],
+            borderWidth: 0,
+            hoverOffset: 10
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'right',
+              labels: { color: '#fff', padding: 20 }
+            }
+          },
+          cutout: '70%'
+        }
+      });
+    } else {
+
+      document.getElementById('statusChart').style.display = 'none';
+      statusEmptyMsg.classList.remove('d-none');
     }
   });
 </script>
