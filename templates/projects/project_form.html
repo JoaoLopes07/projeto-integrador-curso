@@ -2,84 +2,142 @@
 {% block title %}Gerenciar Projeto | ACJOGOS{% endblock %}
 
 {% block content %}
-<div class="container pb-5">
+<style>
+    /* Card do Cabeçalho */
+    .project-header-card {
+        background: linear-gradient(135deg, #2b1055 0%, #7597de 100%);
+        border-radius: 1rem;
+        padding: 3rem 2rem;
+        color: white;
+        margin-bottom: -2rem;
+        position: relative;
+        z-index: 1;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    
+    /* Container do Formulário */
+    .form-container-glass {
+        background: #1a1a1a; /* Fundo sólido escuro para contraste */
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 1rem;
+        padding: 4rem 2.5rem 2.5rem 2.5rem;
+        margin-top: 0;
+        position: relative;
+        z-index: 0;
+    }
+
+    /* Labels Destacados */
+    .form-label-highlight {
+        color: #d4a5ff; /* Roxo claro */
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 1px;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    /* Inputs de Alta Visibilidade */
+    .form-control-custom {
+        background-color: #2b2b2b !important;
+        border: 1px solid #555 !important;
+        color: #fff !important;
+        border-radius: 0.5rem;
+    }
+    
+    .form-control-custom:focus {
+        border-color: #a742f5 !important;
+        box-shadow: 0 0 0 3px rgba(167, 66, 245, 0.25);
+    }
+</style>
+
+<div class="container pb-5 mt-4">
     <div class="row justify-content-center">
         <div class="col-lg-8">
             
-            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-                <div class="card-header bg-white py-4 border-bottom">
-                    <h4 class="fw-bold mb-0 text-dark">
-                        {% if form.instance.pk %}
-                            <i class="fas fa-edit me-2 text-primary"></i>Editar Projeto
-                        {% else %}
-                            <i class="fas fa-plus-circle me-2 text-success"></i>Novo Projeto
-                        {% endif %}
-                    </h4>
-                </div>
-                
-                <div class="card-body p-4 p-md-5">
-                    <form method="post">
-                        {% csrf_token %}
-                        
-                        {% if form.non_field_errors %}
-                            <div class="alert alert-danger mb-4">
-                                {% for error in form.non_field_errors %}{{ error }}{% endfor %}
-                            </div>
-                        {% endif %}
-
-                        <div class="mb-4">
-                            <label class="form-label small fw-bold text-uppercase text-muted">Nome do Projeto</label>
-                            <input type="text" name="name" class="form-control form-control-lg bg-light border-0" value="{{ form.instance.name|default:'' }}" placeholder="Ex: Jogo de Aventura RPG" required>
-                            {% if form.name.errors %}
-                                <div class="text-danger small mt-1">{{ form.name.errors.0 }}</div>
-                            {% endif %}
+            <div class="project-header-card text-center">
+                {% if form.instance.pk %}
+                    <h2 class="fw-bold mb-1 text-white"><i class="fas fa-edit me-2"></i>Editar Projeto</h2>
+                    <p class="text-white-50 mb-0">Atualize os detalhes e o status do desenvolvimento.</p>
+                {% else %}
+                    <h2 class="fw-bold mb-1 text-white"><i class="fas fa-gamepad me-2"></i>Novo Projeto</h2>
+                    <p class="text-white-50 mb-0">Comece a construir o portfólio da sua empresa.</p>
+                {% endif %}
+            </div>
+            
+            <div class="form-container-glass">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger mb-4">
+                            {% for error in form.non_field_errors %}{{ error }}{% endfor %}
                         </div>
+                    {% endif %}
 
-                        <div class="mb-4">
-                            <label class="form-label small fw-bold text-uppercase text-muted">Descrição Detalhada</label>
-                            <textarea name="description" class="form-control bg-light border-0" rows="5" placeholder="Descreva o conceito, mecânicas e objetivos...">{{ form.instance.description|default:'' }}</textarea>
-                            {% if form.description.errors %}
-                                <div class="text-danger small mt-1">{{ form.description.errors.0 }}</div>
-                            {% endif %}
-                        </div>
+                    <div class="mb-4">
+                        <label class="form-label-highlight">Nome do Projeto</label>
+                        <input type="text" name="name" 
+                               class="form-control form-control-custom py-3 px-3" 
+                               style="font-size: 1.2rem;"
+                               value="{{ form.instance.name|default:'' }}" 
+                               placeholder="Ex: Cyber Odyssey 2077" required>
+                        {% if form.name.errors %}
+                            <div class="text-danger small mt-1 fw-bold">{{ form.name.errors.0 }}</div>
+                        {% endif %}
+                    </div>
 
-                        <div class="row mb-5">
-                            <div class="col-md-6">
-                                <label class="form-label small fw-bold text-uppercase text-muted">Status Atual</label>
-                                <select name="status" class="form-select bg-light border-0">
-                                    <option value="pending" 
-                                        {% if form.instance.status == 'pending' %}selected{% endif %}>
-                                        Pendente (Planejamento)
+                    <div class="mb-4">
+                        <label class="form-label-highlight">Descrição Detalhada</label>
+                        <textarea name="description" 
+                                  class="form-control form-control-custom px-3" 
+                                  rows="6" 
+                                  placeholder="Descreva o conceito, mecânicas principais, público-alvo e objetivos...">{{ form.instance.description|default:'' }}</textarea>
+                        {% if form.description.errors %}
+                            <div class="text-danger small mt-1 fw-bold">{{ form.description.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="row g-4 mb-5">
+                        <div class="col-md-6">
+                            <label class="form-label-highlight mb-2">Fase Atual</label>
+                            <div class="p-0">
+                                <select name="status" class="form-select form-control-custom" style="padding: 0.8rem;">
+                                    <option value="pending" {% if form.instance.status == 'pending' %}selected{% endif %}>
+                                        🟡 Planejamento
                                     </option>
-                                    
-                                    <option value="active" 
-                                        {% if form.instance.status == 'active' %}selected{% endif %}>
-                                        Ativo (Em Desenvolvimento)
+                                    <option value="active" {% if form.instance.status == 'active' %}selected{% endif %}>
+                                        🟢 Em Desenvolvimento
                                     </option>
-                                    
-                                    <option value="finished" 
-                                        {% if form.instance.status == 'finished' %}selected{% endif %}>
-                                        Concluído
+                                    <option value="finished" {% if form.instance.status == 'finished' %}selected{% endif %}>
+                                        🔵 Finalizado
                                     </option>
                                 </select>
                             </div>
-                            <div class="col-md-6">
-                                {% if form.company %}
-                                    <label class="form-label small fw-bold text-uppercase text-muted">Empresa Responsável</label>
+                        </div>
+
+                        <div class="col-md-6">
+                            {% if form.company %}
+                                <label class="form-label-highlight mb-2">Empresa Responsável</label>
+                                <div class="p-0">
                                     {{ form.company }} 
-                                {% endif %}
-                            </div>
+                                </div>
+                            {% endif %}
                         </div>
+                    </div>
 
-                        <div class="d-flex justify-content-end gap-2">
-                            <a href="{% url 'project_list' %}" class="btn btn-outline-secondary px-4 fw-bold">Cancelar</a>
-                            <button type="submit" class="btn btn-success px-5 fw-bold shadow-sm">
-                                <i class="fas fa-save me-2"></i>Salvar Projeto
-                            </button>
-                        </div>
+                    <hr class="border-secondary opacity-25 my-4">
 
-                    </form>
-                </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="{% url 'project_list' %}" class="btn btn-outline-light px-4">
+                            Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary px-5 py-2 fw-bold shadow">
+                            <i class="fas fa-save me-2"></i>Salvar Projeto
+                        </button>
+                    </div>
+
+                </form>
             </div>
 
         </div>
@@ -88,11 +146,11 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        var inputs = document.querySelectorAll('input:not([type="hidden"]), select, textarea');
-        inputs.forEach(function(input) {
-            if(!input.classList.contains('form-control') && !input.classList.contains('form-select')) {
-                input.classList.add('form-control', 'bg-light', 'border-0');
-            }
+        // Aplica o estilo customizado aos selects gerados automaticamente
+        var selects = document.querySelectorAll('select');
+        selects.forEach(function(select) {
+            select.classList.add('form-select', 'form-control-custom');
+            select.style.padding = '0.8rem';
         });
     });
 </script>

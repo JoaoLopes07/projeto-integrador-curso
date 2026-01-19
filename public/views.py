@@ -16,7 +16,7 @@ def check_admin_access(user):
     return user.is_authenticated and (user.is_staff or user.is_superuser)
 
 
-@user_passes_test(check_admin_access)
+
 def map_view(request):
     empresas = Company.objects.filter(latitude__isnull=False, longitude__isnull=False)
 

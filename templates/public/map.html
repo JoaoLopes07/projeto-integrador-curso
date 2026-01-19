@@ -4,21 +4,52 @@
 {% block content %}
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
+<style>
+    /* Estilo Glass para o container do mapa */
+    .map-card {
+        background: rgba(30, 30, 30, 0.6);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 1.5rem;
+        padding: 1rem;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+
+    /* Títulos */
+    .page-title {
+        background: linear-gradient(135deg, #fff 0%, #a742f5 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 800;
+    }
+
+    /* Customização do Popup do Leaflet para Dark Mode */
+    .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+        background: #1a1a1a;
+        color: #fff;
+        border: 1px solid rgba(167, 66, 245, 0.3);
+    }
+    .leaflet-popup-content strong {
+        color: #a742f5;
+        font-size: 1.1rem;
+    }
+</style>
+
 <div class="container py-5">
     <div class="text-center mb-5">
-        <h1 class="fw-bold">Mapa do Ecossistema</h1>
-        <p class="text-muted">Localize estúdios e empresas associadas no Estado do Rio de Janeiro.</p>
+        <h1 class="display-4 page-title mb-2">Mapa do Ecossistema</h1>
+        <p class="text-white-50 lead">Localize estúdios e empresas associadas no Estado do Rio de Janeiro.</p>
     </div>
 
-    <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
-        <div class="card-body p-0">
+    <div class="map-card mb-4">
+        <div class="rounded-4 overflow-hidden border border-white border-opacity-10">
             <div id="map" style="height: 600px; width: 100%;"></div>
         </div>
     </div>
 
-    <div class="mt-4 text-center">
-        <a href="{% url 'public:landing' %}" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left me-2"></i>Voltar
+    <div class="text-center">
+        <a href="{% url 'public:landing' %}" class="btn btn-outline-light px-4 py-2 rounded-pill hover-scale">
+            <i class="fas fa-arrow-left me-2"></i>Voltar ao Início
         </a>
     </div>
 </div>
@@ -29,14 +60,17 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        // Inicializa o mapa focado no RJ
         var map = L.map('map').setView([-22.9068, -43.1729], 8);
 
+        // Adiciona o layer do OpenStreetMap
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            attribution: '&copy; ACJOGOS contributors'
         }).addTo(map);
 
-        var redIcon = L.icon({
-            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+        // Ícone Personalizado (Vermelho/Padrão ou troque pela URL do seu logo se quiser)
+        var customIcon = L.icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-violet.png', // Mudei para Violeta para combinar com o site
             shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
             iconSize: [25, 41],
             iconAnchor: [12, 41],
@@ -51,13 +85,16 @@
             empresas.forEach(function (empresa) {
                 if (empresa.lat && empresa.lng) {
 
-                    var marker = L.marker([empresa.lat, empresa.lng], { icon: redIcon }).addTo(map);
+                    var marker = L.marker([empresa.lat, empresa.lng], { icon: customIcon }).addTo(map);
 
+                    // Conteúdo do Popup melhorado
                     var popupContent = `
-                        <div style="text-align:center;">
-                            <strong>${empresa.nome}</strong><br>
-                            <span class="text-muted small">${empresa.cidade}</span><br>
-                            ${empresa.url !== '#' ? `<a href="${empresa.url}" target="_blank" class="btn btn-sm btn-primary mt-2">Visitar Site</a>` : ''}
+                        <div style="text-align:center; padding: 5px;">
+                            <strong style="display:block; margin-bottom:5px;">${empresa.nome}</strong>
+                            <span style="color: #ccc; font-size: 0.9em;">${empresa.cidade}</span><br>
+                            ${empresa.url !== '#' ? 
+                                `<a href="${empresa.url}" target="_blank" class="btn btn-sm btn-primary mt-2" style="background: #a742f5; border:none;">Visitar Site</a>` 
+                                : ''}
                         </div>
                     `;
 

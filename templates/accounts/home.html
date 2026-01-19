@@ -1,159 +1,329 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block title %}Dashboard | ACJOGOS{% endblock %}
 
 {% block content %}
+<style>
+    /* --- EFEITOS ESPECIAIS DO DASHBOARD --- */
+
+    /* 1. Hero Section com Animação de Fundo */
+    .dashboard-hero {
+        background: linear-gradient(135deg, #1a0b2e 0%, #0f0f13 100%);
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        box-shadow: 0 0 50px rgba(0,0,0,0.5);
+    }
+    
+    .hero-blob {
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        filter: blur(80px);
+        opacity: 0.4;
+        animation: blob-bounce 10s infinite alternate;
+    }
+    .blob-1 { background: #a742f5; top: -100px; right: -50px; }
+    .blob-2 { background: #FF6B6B; bottom: -100px; left: -50px; animation-delay: -5s; }
+
+    @keyframes blob-bounce {
+        0% { transform: translate(0, 0) scale(1); }
+        100% { transform: translate(20px, -20px) scale(1.1); }
+    }
+
+    /* 2. Cards de Estatísticas (Neon Glow) */
+    .stat-card {
+        background: rgba(25, 25, 25, 0.6);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        height: 100%;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        group: hover;
+    }
+
+    /* Cores Específicas para cada Card */
+    .card-purple:hover { border-color: #a742f5; box-shadow: 0 10px 30px -5px rgba(167, 66, 245, 0.3); }
+    .card-blue:hover   { border-color: #4361ee; box-shadow: 0 10px 30px -5px rgba(67, 97, 238, 0.3); }
+    .card-orange:hover { border-color: #fb6340; box-shadow: 0 10px 30px -5px rgba(251, 99, 64, 0.3); }
+    .card-cyan:hover   { border-color: #11cdef; box-shadow: 0 10px 30px -5px rgba(17, 205, 239, 0.3); }
+
+    .stat-icon-wrapper {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+        transition: transform 0.3s;
+    }
+
+    .stat-card:hover .stat-icon-wrapper { transform: scale(1.1) rotate(5deg); }
+
+    /* 3. Timeline de Atividades */
+    .timeline-container {
+        position: relative;
+        padding-left: 20px;
+    }
+    .timeline-container::before {
+        content: '';
+        position: absolute;
+        left: 0; top: 10px; bottom: 10px;
+        width: 2px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 2px;
+    }
+    
+    .timeline-item {
+        position: relative;
+        padding-left: 25px;
+        margin-bottom: 1.5rem;
+    }
+    
+    .timeline-dot {
+        position: absolute;
+        left: -5px;
+        top: 5px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #333;
+        border: 2px solid #a742f5;
+        box-shadow: 0 0 10px rgba(167, 66, 245, 0.5);
+    }
+
+    /* 4. Banner de Pesquisa */
+    .survey-banner {
+        background: linear-gradient(135deg, #FF6B6B 0%, #a742f5 100%);
+        border: none;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.3s;
+    }
+    .survey-banner:hover { transform: translateY(-3px); }
+    
+    /* Textos */
+    .text-value { font-size: 2.2rem; font-weight: 800; color: #fff; line-height: 1; letter-spacing: -1px; }
+    .text-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; opacity: 0.7; }
+</style>
+
 <div class="container pb-5">
 
-    <div class="bg-white rounded-3 p-4 p-md-5 mb-5 shadow-sm border position-relative overflow-hidden">
-        <div class="row align-items-center position-relative" style="z-index: 1;">
+    <div class="dashboard-hero rounded-4 p-4 p-md-5 mb-5 fade-in-up">
+        <div class="hero-blob blob-1"></div>
+        <div class="hero-blob blob-2"></div>
+        
+        <div class="row align-items-center position-relative z-1">
             <div class="col-lg-8">
-                <h6 class="text-uppercase text-primary fw-bold letter-spacing-1 mb-2">Painel de Controle</h6>
-                <h1 class="display-5 fw-bold text-dark mb-3">Bem-vindo, {{ user.get_full_name|default:user.username }}!
+                <div class="d-flex align-items-center mb-3">
+                    <span class="badge bg-white bg-opacity-10 border border-white border-opacity-10 text-white me-2 px-3 py-2 rounded-pill backdrop-blur">
+                        <i class="fas fa-layer-group me-2"></i>Painel de Controle
+                    </span>
+                    <span class="text-white-50 small text-uppercase ls-1 fw-bold">{{ user.get_role_display }}</span>
+                </div>
+                
+                <h1 class="display-4 fw-bold text-white mb-3">
+                    Olá, <span style="background: linear-gradient(to right, #fff, #a742f5); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">{{ user.get_full_name|default:user.username }}</span>! 👋
                 </h1>
-                <p class="lead text-muted mb-4">Aqui você tem uma visão geral dos projetos, empresas associadas e
-                    pendências da ACJOGOS-RJ.</p>
-                <div class="d-flex gap-3">
+                
+                <p class="lead text-white-50 mb-4" style="font-weight: 300; max-width: 650px;">
+                    Bem-vindo à Intranet ACJOGOS. Aqui está o resumo do ecossistema de jogos hoje.
+                </p>
+
+                <div class="d-flex flex-wrap gap-3">
                     {% if user.is_authenticated and user.role == 'diretoria' or user.is_authenticated and user.role == 'associado' %}
-                        <a href="{% url 'project_create' %}" class="btn btn-primary btn-lg px-4">
-                            <i class="fas fa-plus-circle me-2"></i>Novo Projeto
+                        <a href="{% url 'project_create' %}" class="btn btn-light fw-bold px-4 py-2 shadow-lg rounded-pill hover-scale">
+                            <i class="fas fa-plus-circle me-2 text-primary"></i>Novo Projeto
                         </a>
                     {% endif %}
 
-                    <a href="{% url 'profile' %}" class="btn btn-outline-secondary btn-lg px-4">
+                    <a href="{% url 'profile' %}" class="btn btn-outline-light px-4 py-2 rounded-pill hover-bg-light">
                         <i class="fas fa-user-cog me-2"></i>Meu Perfil
                     </a>
                     
                     {% if user.is_authenticated and user.role == 'diretoria' %}
-                        <a href="{% url 'dashboard_diretoria' %}" class="btn btn-dark btn-lg px-4">
-                            <i class="fas fa-chart-line me-2"></i>Dashboard Diretoria
+                        <a href="{% url 'dashboard_diretoria' %}" class="btn btn-dark bg-opacity-50 border-white border-opacity-10 px-4 py-2 rounded-pill">
+                            <i class="fas fa-chart-line me-2"></i>Admin
                         </a>
                     {% endif %}
                 </div>
             </div>
-            <div class="col-lg-4 d-none d-lg-block text-end">
-                <i class="fas fa-gamepad text-primary opacity-10"
-                    style="font-size: 10rem; position: absolute; right: -20px; top: -40px;"></i>
-                <i class="fas fa-layer-group text-secondary opacity-10"
-                    style="font-size: 8rem; position: absolute; right: 140px; bottom: -50px;"></i>
+            
+            <div class="col-lg-4 d-none d-lg-block text-end position-relative">
+                 <img src="{% static 'img/logo.webp' %}" 
+                      alt="Logo" 
+                      style="width: 320px; opacity: 0.2; filter: drop-shadow(0 0 30px rgba(167,66,245,0.6)); transform: perspective(500px) rotateY(-15deg);">
             </div>
         </div>
     </div>
 
     <div class="row g-4 mb-5">
-        <div class="col-md-3">
-            <div class="card h-100 border-0 shadow-sm hover-lift">
-                <div class="card-body p-4 d-flex align-items-center">
-                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-3 me-3"
-                        style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
-                        <i class="fas fa-building fa-lg"></i>
-                    </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="stat-card card-purple">
+                <div class="d-flex justify-content-between align-items-start">
                     <div>
-                        <h6 class="text-muted text-uppercase small fw-bold mb-1">Empresas</h6>
-                        <h3 class="mb-0 fw-bold">8</h3>
+                        <div class="text-label text-white mb-2">Empresas</div>
+                        <div class="text-value">8</div>
                     </div>
+                    <div class="stat-icon-wrapper" style="background: rgba(167, 66, 245, 0.2); color: #d4a5ff;">
+                        <i class="fas fa-building"></i>
+                    </div>
+                </div>
+                <div class="mt-3 text-white-50 small">
+                    <i class="fas fa-arrow-up text-success me-1"></i> <span class="text-white">2</span> novas este mês
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card h-100 border-0 shadow-sm hover-lift">
-                <div class="card-body p-4 d-flex align-items-center">
-                    <div class="bg-success bg-opacity-10 text-success rounded-circle p-3 me-3"
-                        style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
-                        <i class="fas fa-project-diagram fa-lg"></i>
-                    </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="stat-card card-blue">
+                <div class="d-flex justify-content-between align-items-start">
                     <div>
-                        <h6 class="text-muted text-uppercase small fw-bold mb-1">Projetos</h6>
-                        <h3 class="mb-0 fw-bold">12</h3>
+                        <div class="text-label text-white mb-2">Projetos</div>
+                        <div class="text-value">12</div>
                     </div>
+                    <div class="stat-icon-wrapper" style="background: rgba(67, 97, 238, 0.2); color: #8aa2ff;">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                </div>
+                <div class="mt-3 text-white-50 small">
+                    <span class="text-white fw-bold">3</span> em andamento
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card h-100 border-0 shadow-sm hover-lift">
-                <div class="card-body p-4 d-flex align-items-center">
-                    <div class="bg-warning bg-opacity-10 text-warning rounded-circle p-3 me-3"
-                        style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
-                        <i class="fas fa-clipboard-list fa-lg"></i>
-                    </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="stat-card card-orange">
+                <div class="d-flex justify-content-between align-items-start">
                     <div>
-                        <h6 class="text-muted text-uppercase small fw-bold mb-1">Pesquisas</h6>
-                        <h3 class="mb-0 fw-bold">1</h3>
+                        <div class="text-label text-white mb-2">Pesquisas</div>
+                        <div class="text-value">1</div>
                     </div>
+                    <div class="stat-icon-wrapper" style="background: rgba(251, 99, 64, 0.2); color: #ffb199;">
+                        <i class="fas fa-poll"></i>
+                    </div>
+                </div>
+                <div class="mt-3 text-white-50 small">
+                    Censo anual aberto
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card h-100 border-0 shadow-sm hover-lift">
-                <div class="card-body p-4 d-flex align-items-center">
-                    <div class="bg-info bg-opacity-10 text-info rounded-circle p-3 me-3"
-                        style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
-                        <i class="fas fa-users fa-lg"></i>
-                    </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="stat-card card-cyan">
+                <div class="d-flex justify-content-between align-items-start">
                     <div>
-                        <h6 class="text-muted text-uppercase small fw-bold mb-1">Membros</h6>
-                        <h3 class="mb-0 fw-bold">24</h3>
+                        <div class="text-label text-white mb-2">Membros</div>
+                        <div class="text-value">24</div>
                     </div>
+                    <div class="stat-icon-wrapper" style="background: rgba(17, 205, 239, 0.2); color: #8eeeff;">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+                <div class="mt-3 text-white-50 small">
+                    Base ativa e crescendo
                 </div>
             </div>
         </div>
     </div>
 
     <div class="row g-4">
+        
         <div class="col-lg-8">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white py-3 border-0">
-                    <h5 class="card-title mb-0 fw-bold">Atividades Recentes</h5>
+            <div class="card h-100 border-0" style="background: rgba(30,30,30,0.4); backdrop-filter: blur(10px); border-radius: 1rem;">
+                <div class="card-header border-0 bg-transparent pt-4 px-4 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold text-white mb-0"><i class="fas fa-history me-2 text-muted"></i>Atividades Recentes</h5>
+                    <button class="btn btn-sm btn-outline-secondary rounded-pill">Ver tudo</button>
                 </div>
-                <div class="card-body p-0">
-                    <div class="list-group list-group-flush">
-                        <div class="list-group-item px-4 py-3 border-light d-flex align-items-center">
-                            <div class="me-3">
-                                <span class="badge bg-light text-primary rounded-pill p-2"><i
-                                        class="fas fa-sign-in-alt"></i></span>
+                
+                <div class="card-body px-4 pb-4">
+                    <div class="timeline-container mt-2">
+                        <div class="timeline-item">
+                            <div class="timeline-dot" style="border-color: #4361ee;"></div>
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-white mb-1 fw-bold">Login efetuado</h6>
+                                    <p class="text-muted small mb-0">Acesso realizado via interface Web.</p>
+                                </div>
+                                <small class="text-white-50">Hoje, 10:30</small>
                             </div>
-                            <div class="flex-grow-1">
-                                <h6 class="mb-0 fw-bold text-dark">Login efetuado</h6>
-                                <small class="text-muted">Acesso via Web</small>
-                            </div>
-                            <small class="text-muted">Hoje, 10:30</small>
                         </div>
-                        <div class="list-group-item px-4 py-3 border-light d-flex align-items-center">
-                            <div class="me-3">
-                                <span class="badge bg-light text-success rounded-pill p-2"><i
-                                        class="fas fa-check"></i></span>
+
+                        <div class="timeline-item">
+                            <div class="timeline-dot" style="border-color: #2dce89;"></div>
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-white mb-1 fw-bold">Projeto "Indie Game" Atualizado</h6>
+                                    <p class="text-muted small mb-0">Status alterado de <em>Pendente</em> para <em>Em Desenvolvimento</em>.</p>
+                                </div>
+                                <small class="text-white-50">Ontem, 15:45</small>
                             </div>
-                            <div class="flex-grow-1">
-                                <h6 class="mb-0 fw-bold text-dark">Projeto Atualizado</h6>
-                                <small class="text-muted">Alteração no status do projeto "Indie Game"</small>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-dot" style="border-color: #fb6340;"></div>
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="text-white mb-1 fw-bold">Perfil Editado</h6>
+                                    <p class="text-muted small mb-0">Atualização de dados cadastrais (telefone).</p>
+                                </div>
+                                <small class="text-white-50">2 dias atrás</small>
                             </div>
-                            <small class="text-muted">Ontem, 15:45</small>
                         </div>
                     </div>
-                </div>
-                <div class="card-footer bg-white border-0 text-center py-3">
-                    <a href="#" class="text-decoration-none fw-bold small">Ver todo o histórico <i
-                            class="fas fa-arrow-right ms-1"></i></a>
                 </div>
             </div>
         </div>
 
         <div class="col-lg-4">
-            <div class="card border-0 shadow-sm bg-primary text-white h-100 overflow-hidden position-relative">
-                {% if user.is_authenticated and user.role == 'diretoria' or user.is_authenticated and user.role == 'associado' or user.is_authenticated and user.role == 'afiliado' %}
-                    <div class="card-body position-relative p-4" style="z-index: 2;">
-                
-                        <h4 class="fw-bold mb-3">Pesquisa Anual 2026</h4>
-                            <p class="opacity-75 mb-4">Sua participação é fundamental para o crescimento do ecossistema de jogos
-                                no RJ.</p>
-                            <a href="{% url 'surveys:responder' %}"
-                                class="btn btn-light text-primary fw-bold w-100 shadow-sm">Responder Agora</a>    
-                    </div>
-                {% endif %}
+            <div class="card h-100 survey-banner shadow-lg rounded-4">
                 <div class="position-absolute top-0 end-0 p-3 opacity-25">
-                    <i class="fas fa-poll fa-6x text-white" style="transform: rotate(15deg);"></i>
+                    <i class="fas fa-clipboard-list fa-10x text-white" style="transform: rotate(25deg) translate(30px, -30px);"></i>
+                </div>
+
+                <div class="card-body p-4 d-flex flex-column position-relative z-1 text-center justify-content-center">
+                    <div class="mb-3">
+                         <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-white text-primary" style="width: 60px; height: 60px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+                            <i class="fas fa-bullhorn fa-lg"></i>
+                         </div>
+                    </div>
+                    
+                    <h3 class="fw-bold text-white mb-2">Censo Anual 2026</h3>
+                    <p class="text-white opacity-90 mb-4 small">
+                        Sua participação é vital para mapearmos o crescimento do setor no Rio de Janeiro.
+                    </p>
+                    
+                    <div>
+                        {% if user.is_authenticated and user.role == 'diretoria' or user.is_authenticated and user.role == 'associado' or user.is_authenticated and user.role == 'afiliado' %}
+                            <a href="{% url 'surveys:responder' %}" class="btn btn-white text-primary fw-bold px-5 py-3 rounded-pill shadow-lg hover-scale">
+                                Responder Agora <i class="fas fa-arrow-right ms-2"></i>
+                            </a>
+                        {% else %}
+                             <button class="btn btn-white text-muted fw-bold px-5 py-3 rounded-pill disabled" disabled>
+                                Apenas Associados
+                            </button>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    /* Animações utilitárias */
+    .fade-in-up { animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; transform: translateY(20px); }
+    @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+    
+    .hover-scale:hover { transform: scale(1.05); }
+    .hover-bg-light:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    .backdrop-blur { backdrop-filter: blur(5px); }
+</style>
 {% endblock %}
