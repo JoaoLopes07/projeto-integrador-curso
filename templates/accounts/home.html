@@ -13,9 +13,12 @@
                 <p class="lead text-muted mb-4">Aqui você tem uma visão geral dos projetos, empresas associadas e
                     pendências da ACJOGOS-RJ.</p>
                 <div class="d-flex gap-3">
-                    <a href="{% url 'project_create' %}" class="btn btn-primary btn-lg px-4">
-                        <i class="fas fa-plus-circle me-2"></i>Novo Projeto
-                    </a>
+                    {% if user.is_authenticated and user.role == 'diretoria' or user.is_authenticated and user.role == 'associado' %}
+                        <a href="{% url 'project_create' %}" class="btn btn-primary btn-lg px-4">
+                            <i class="fas fa-plus-circle me-2"></i>Novo Projeto
+                        </a>
+                    {% endif %}
+
                     <a href="{% url 'profile' %}" class="btn btn-outline-secondary btn-lg px-4">
                         <i class="fas fa-user-cog me-2"></i>Meu Perfil
                     </a>
@@ -136,13 +139,16 @@
 
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm bg-primary text-white h-100 overflow-hidden position-relative">
-                <div class="card-body position-relative p-4" style="z-index: 2;">
-                    <h4 class="fw-bold mb-3">Pesquisa Anual 2026</h4>
-                    <p class="opacity-75 mb-4">Sua participação é fundamental para o crescimento do ecossistema de jogos
-                        no RJ.</p>
-                    <a href="{% url 'surveys:responder' %}"
-                        class="btn btn-light text-primary fw-bold w-100 shadow-sm">Responder Agora</a>
-                </div>
+                {% if user.is_authenticated and user.role == 'diretoria' or user.is_authenticated and user.role == 'associado' or user.is_authenticated and user.role == 'afiliado' %}
+                    <div class="card-body position-relative p-4" style="z-index: 2;">
+                
+                        <h4 class="fw-bold mb-3">Pesquisa Anual 2026</h4>
+                            <p class="opacity-75 mb-4">Sua participação é fundamental para o crescimento do ecossistema de jogos
+                                no RJ.</p>
+                            <a href="{% url 'surveys:responder' %}"
+                                class="btn btn-light text-primary fw-bold w-100 shadow-sm">Responder Agora</a>    
+                    </div>
+                {% endif %}
                 <div class="position-absolute top-0 end-0 p-3 opacity-25">
                     <i class="fas fa-poll fa-6x text-white" style="transform: rotate(15deg);"></i>
                 </div>
