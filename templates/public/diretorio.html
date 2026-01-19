@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Diretório{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1>Diretório Público</h1>
+
+  <form method="get" class="row g-2 mt-3 mb-4">
+
+    {# ===== ESTADO ===== #}
+    <div class="col-md-2">
+      <label class="form-label">Estado (UF)</label>
+      <select name="estado" class="form-select">
+        <option value="">Todos</option>
+        {% for uf in estados_disponiveis %}
+          <option value="{{ uf }}" {% if filters.estado == uf %}selected{% endif %}>
+            {{ uf }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    {# ===== CIDADE ===== #}
+    <div class="col-md-4">
+      <label class="form-label">Cidade</label>
+
+      {% if cidades_disponiveis %}
+        <select name="cidade" class="form-select">
+          <option value="">Todas</option>
+          {% for cidade in cidades_disponiveis %}
+            <option value="{{ cidade }}"
+                    {% if filters.cidade == cidade %}selected{% endif %}>
+              {{ cidade }}
+            </option>
+          {% endfor %}
+        </select>
+      {% else %}
+        <select class="form-select" disabled>
+          <option>Selecione um estado primeiro</option>
+        </select>
+        <small class="text-muted">
+          Escolha um estado para habilitar o filtro por cidade.
+        </small>
+      {% endif %}
+    </div>
+
+    {# ===== STATUS ===== #}
+    <div class="col-md-3">
+      <label class="form-label">Status do Projeto</label>
+      <select name="status" class="form-select">
+        <option value="">Todos</option>
+        {% for value, label in status_choices %}
+          <option value="{{ value }}" {% if filters.status == value %}selected{% endif %}>
+            {{ label }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    {# ===== BOTÕES ===== #}
+    <div class="col-md-3 d-flex align-items-end gap-2">
+      <button class="btn btn-primary" type="submit">Filtrar</button>
+      <a class="btn btn-outline-secondary" href="{% url 'public:diretorio' %}">
+        Limpar
+      </a>
+    </div>
+
+  </form>
+
+  <p>
+    <strong>{{ companies|length }}</strong> empresas encontradas.
+  </p>
+
+  <div class="list-group">
+    {% for c in companies %}
+      <div class="list-group-item">
+        <div class="d-flex justify-content-between">
+          <div>
+            <h5 class="mb-1">{{ c.nome_fantasia }}</h5>
+            <small>{{ c.cidade }} - {{ c.estado }}</small>
+          </div>
+          <div>
+            <span class="badge bg-secondary">
+              Projetos: {{ c.projects_count }}
+            </span>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="alert alert-warning">
+        Nenhuma empresa encontrada com esses filtros.
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
