@@ -5,17 +5,15 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
 <style>
-    /* Estilo Glass para o container do mapa */
     .map-card {
         background: rgba(30, 30, 30, 0.6);
         backdrop-filter: blur(12px);
         border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 1.5rem;
         padding: 1rem;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
     }
 
-    /* Títulos */
     .page-title {
         background: linear-gradient(135deg, #fff 0%, #a742f5 100%);
         -webkit-background-clip: text;
@@ -23,12 +21,13 @@
         font-weight: 800;
     }
 
-    /* Customização do Popup do Leaflet para Dark Mode */
-    .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+    .leaflet-popup-content-wrapper,
+    .leaflet-popup-tip {
         background: #1a1a1a;
         color: #fff;
         border: 1px solid rgba(167, 66, 245, 0.3);
     }
+
     .leaflet-popup-content strong {
         color: #a742f5;
         font-size: 1.1rem;
@@ -60,15 +59,12 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        // Inicializa o mapa focado no RJ
         var map = L.map('map').setView([-22.9068, -43.1729], 8);
 
-        // Adiciona o layer do OpenStreetMap
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; ACJOGOS contributors'
         }).addTo(map);
 
-        // Ícone Personalizado (Vermelho/Padrão ou troque pela URL do seu logo se quiser)
         var customIcon = L.icon({
             iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-violet.png', // Mudei para Violeta para combinar com o site
             shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
@@ -87,14 +83,13 @@
 
                     var marker = L.marker([empresa.lat, empresa.lng], { icon: customIcon }).addTo(map);
 
-                    // Conteúdo do Popup melhorado
                     var popupContent = `
                         <div style="text-align:center; padding: 5px;">
                             <strong style="display:block; margin-bottom:5px;">${empresa.nome}</strong>
                             <span style="color: #ccc; font-size: 0.9em;">${empresa.cidade}</span><br>
-                            ${empresa.url !== '#' ? 
-                                `<a href="${empresa.url}" target="_blank" class="btn btn-sm btn-primary mt-2" style="background: #a742f5; border:none;">Visitar Site</a>` 
-                                : ''}
+                            ${empresa.url !== '#' ?
+                            `<a href="${empresa.url}" target="_blank" class="btn btn-sm btn-primary mt-2" style="background: #a742f5; border:none;">Visitar Site</a>`
+                            : ''}
                         </div>
                     `;
 

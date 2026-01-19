@@ -1,23 +1,16 @@
 from django.shortcuts import render
-from django.contrib.auth.decorators import (
-    user_passes_test,
-)
 from companies.models import Company
 from projects.models import Project
 from django.db.models import Count, Q
-
+import json
 
 
 def landing(request):
     return render(request, "public/landing.html")
 
 
-def check_admin_access(user):
-    return user.is_authenticated and (user.is_staff or user.is_superuser)
-
-
-
 def map_view(request):
+
     empresas = Company.objects.filter(latitude__isnull=False, longitude__isnull=False)
 
     empresas_data = []
@@ -33,14 +26,14 @@ def map_view(request):
         )
 
     context = {"empresas_json": empresas_data}
-
     return render(request, "public/map.html", context)
 
 
 def diretorio(request):
+
     cidade = (request.GET.get("cidade") or "").strip()
     estado = (request.GET.get("estado") or "").strip()
-    status = (request.GET.get("status") or "").strip()  
+    status = (request.GET.get("status") or "").strip()
 
     companies = Company.objects.all()
 
@@ -56,44 +49,38 @@ def diretorio(request):
     else:
         companies = companies.annotate(projects_count=Count("projects"))
 
-
-    
-    if status:
-        companies = companies.annotate(
-            projects_count=Count("projects", filter=Q(projects__status=status))
-        )
-    else:
-        companies = companies.annotate(projects_count=Count("projects"))
-
-    
-    estados_disponiveis = (
-        Company.objects.values_list("estado", flat=True)
-        .exclude(estado__isnull=True)
-        .exclude(estado__exact="")
+    locations = (
+        Company.objects.exclude(estado="")
+        .exclude(cidade="")
+        .values("estado", "cidade")
         .distinct()
-        .order_by("estado")
     )
 
-    cidades_disponiveis = []
+    mapa_cidades = {}
+    todos_estados = set()
 
-    if estado:
-        cidades_disponiveis = (
-            Company.objects.filter(estado__iexact=estado)
-            .values_list("cidade", flat=True)
-            .exclude(cidade__isnull=True)
-            .exclude(cidade__exact="")
-            .distinct()
-            .order_by("cidade")
-        )
+    for loc in locations:
+        uf = loc["estado"]
+        cid = loc["cidade"]
 
+        todos_estados.add(uf)
+
+        if uf not in mapa_cidades:
+            mapa_cidades[uf] = []
+
+        if cid not in mapa_cidades[uf]:
+            mapa_cidades[uf].append(cid)
+
+    for uf in mapa_cidades:
+        mapa_cidades[uf].sort()
 
     status_choices = Project.STATUS_CHOICES
 
     context = {
         "companies": companies,
         "filters": {"cidade": cidade, "estado": estado, "status": status},
-        "estados_disponiveis": estados_disponiveis,
-        "cidades_disponiveis": cidades_disponiveis,
+        "estados_disponiveis": sorted(list(todos_estados)),
+        "mapa_cidades_json": json.dumps(mapa_cidades),
         "status_choices": status_choices,
     }
     return render(request, "public/diretorio.html", context)
