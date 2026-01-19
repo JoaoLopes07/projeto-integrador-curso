@@ -4,6 +4,4 @@ class AccountsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'accounts'
 
-    def ready(self):
-        """Importa os signals quando o app estiver pronto"""
-        import accounts.signals
+    
