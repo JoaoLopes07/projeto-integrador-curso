@@ -24,7 +24,8 @@ INSTALLED_APPS = [
     'projects',
     'surveys',
     'public',
-    'core',
+    'core.apps.CoreConfig',
+
 ]
 
 MIDDLEWARE = [
