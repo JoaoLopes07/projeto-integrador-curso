@@ -2,76 +2,7 @@
 {% block title %}Login | ACJOGOS{% endblock %}
 
 {% block content %}
-<style>
-    .navbar a[href*="login"] {
-        display: none !important;
-    }
 
-    .login-container {
-        min-height: 80vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .login-card {
-        overflow: hidden;
-        border: none;
-        border-radius: 1rem;
-        box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
-    }
-
-    .login-sidebar {
-        background: linear-gradient(135deg, var(--primary) 0%, #2a52be 100%);
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        color: white;
-        padding: 3rem;
-    }
-
-    .login-sidebar::before {
-        content: '';
-        position: absolute;
-        top: -10%;
-        left: -10%;
-        width: 150px;
-        height: 150px;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 50%;
-    }
-
-    .login-sidebar::after {
-        content: '';
-        position: absolute;
-        bottom: -10%;
-        right: -10%;
-        width: 200px;
-        height: 200px;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 50%;
-    }
-
-    .form-floating>.form-control:focus~label,
-    .form-floating>.form-control:not(:placeholder-shown)~label {
-        color: var(--primary);
-        font-weight: 600;
-    }
-
-    .btn-login {
-        padding: 0.8rem;
-        font-weight: 600;
-        letter-spacing: 0.5px;
-        transition: all 0.3s;
-    }
-
-    .btn-login:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(67, 97, 238, 0.25);
-    }
-</style>
 
 <div class="container login-container py-5">
     <div class="col-xl-10 col-lg-12 col-md-9">
