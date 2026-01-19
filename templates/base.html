@@ -16,7 +16,8 @@
 
     <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
+
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'public:landing' %}">
                 <img src="{% static 'img/logo.webp' %}" alt="ACJOGOS" style="height: 45px; width: auto;">
             </a>
 
@@ -26,35 +27,72 @@
             </button>
 
             <div class="collapse navbar-collapse" id="navContent">
-                {% if user.is_authenticated %}
-                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Visão Geral</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'company-list' %}">Empresas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'project_list' %}">Projetos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'surveys:responder' %}">Pesquisas</a></li>
+
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0 align-items-center">
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'public:landing' %}">Início</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'public:mapa' %}">
+                            <i class="fas fa-map-marked-alt me-1"></i>Mapa
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'public:diretorio' %}">Diretório</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'public:estatisticas' %}">Dados</a>
+                    </li>
+
+                    {% if user.is_authenticated and user.is_staff or user.is_superuser %}
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold text-white" href="{% url 'home' %}">Visão Geral</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'company-list' %}">Minhas Empresas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'project_list' %}">Projetos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'surveys:responder' %}">Pesquisas</a>
+                    </li>
+                    {% endif %}
+
                 </ul>
 
                 <div class="d-flex align-items-center">
+                    {% if user.is_authenticated %}
                     <div class="dropdown">
                         <a href="#"
                             class="d-flex align-items-center text-decoration-none dropdown-toggle text-dark fw-bold"
                             data-bs-toggle="dropdown">
                             {% if user.avatar %}
-                            <img src="{{ user.avatar.url }}" class="rounded-circle me-2" width="32" height="32"
-                                style="object-fit:cover;">
+                            <img src="{{ user.avatar.url }}" class="rounded-circle me-2 border border-2 border-primary"
+                                width="35" height="35" style="object-fit:cover;">
                             {% else %}
-                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2"
-                                style="width: 32px; height: 32px; font-size: 0.8rem;">
+                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2 border border-2 border-white shadow-sm"
+                                style="width: 35px; height: 35px; font-size: 0.9rem;">
                                 {{ user.username|make_list|first|upper }}
                             </div>
                             {% endif %}
-                            <span>{{ user.username }}</span>
+                            <span class="text-white d-none d-md-inline">{{ user.username }}</span>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2">
-                            <li><a class="dropdown-item py-2" href="{% url 'profile' %}"><i
+                        <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-3 p-2 rounded-3">
+                            <li>
+                                <div class="px-3 py-2">
+                                    <small class="text-muted d-block">Logado como</small>
+                                    <strong>{{ user.get_full_name|default:user.username }}</strong>
+                                </div>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item py-2 rounded" href="{% url 'profile' %}"><i
                                         class="fas fa-user me-2 text-muted"></i>Meu Perfil</a></li>
                             {% if user.is_staff %}
-                            <li><a class="dropdown-item py-2" href="{% url 'admin:index' %}"><i
+                            <li><a class="dropdown-item py-2 rounded" href="{% url 'admin:index' %}"><i
                                         class="fas fa-shield-alt me-2 text-muted"></i>Administração</a></li>
                             {% endif %}
                             <li>
@@ -63,59 +101,51 @@
                             <li>
                                 <form action="{% url 'logout' %}" method="post">
                                     {% csrf_token %}
-                                    <button class="dropdown-item py-2 text-danger"><i
+                                    <button class="dropdown-item py-2 text-danger rounded fw-bold"><i
                                             class="fas fa-sign-out-alt me-2"></i>Sair</button>
                                 </form>
                             </li>
                         </ul>
                     </div>
+                    {% else %}
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'login' %}" class="btn btn-primary btn-sm px-4 fw-bold shadow">Entrar</a>
+                        <a href="{% url 'register' %}" class="btn btn-primary btn-sm px-4 fw-bold shadow">Cadastrar</a>
+                    </div>
+                    {% endif %}
                 </div>
-                {% else %}
-                <div class="ms-auto">
-                    <a href="{% url 'login' %}" class="btn btn-primary btn-sm px-4">Entrar</a>
-                </div>
-                {% endif %}
+
             </div>
         </div>
     </nav>
 
     {% if messages %}
-    <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050; margin-top: 60px;">
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050; margin-top: 80px;">
         {% for message in messages %}
-
-        {% if message.tags == "error" %}
-        {% with tag="danger" %}
-        <div class="toast show align-items-center text-white bg-{{ tag }} border-0 mb-2" role="alert">
+        <div class="toast show align-items-center text-white bg-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} border-0 mb-2 shadow-lg"
+            role="alert">
             <div class="d-flex">
-                <div class="toast-body">
+                <div class="toast-body fw-bold">
+                    {% if message.tags == 'success' %}<i class="fas fa-check-circle me-2"></i>{% endif %}
+                    {% if message.tags == 'error' %}<i class="fas fa-exclamation-circle me-2"></i>{% endif %}
                     {{ message }}
                 </div>
                 <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
             </div>
         </div>
-        {% endwith %}
-        {% else %}
-        <div class="toast show align-items-center text-white bg-{{ message.tags }} border-0 mb-2" role="alert">
-            <div class="d-flex">
-                <div class="toast-body">
-                    {{ message }}
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-            </div>
-        </div>
-        {% endif %}
-
         {% endfor %}
     </div>
     {% endif %}
 
-    <main class="flex-grow-1 py-4">
+    <main class="flex-grow-1">
         {% block content %}{% endblock %}
     </main>
 
-    <footer class="text-center">
+    <footer class="text-center mt-auto border-top border-secondary border-opacity-10 py-4 bg-dark bg-opacity-25">
         <div class="container">
-            <p class="text-muted mb-0 small">© {% now "Y" %} ACJOGOS-RJ. Todos os direitos reservados.</p>
+            <p class="text-white-50 mb-0 small">
+                © {% now "Y" %} <strong>ACJOGOS-RJ</strong>. Todos os direitos reservados.
+            </p>
         </div>
     </footer>
 

@@ -1,106 +1,258 @@
 {% extends "base.html" %}
-{% block title %}ACJOGOS-RJ{% endblock %}
+{% load static %}
+
+{% block title %}Hub de Jogos do RJ | ACJOGOS{% endblock %}
 
 {% block content %}
-<div class="container py-5">
+<style>
+  .landing-hero {
+    position: relative;
+    padding: 8rem 0 6rem 0;
+    overflow: hidden;
+    background: radial-gradient(circle at top center, #1a0b2e 0%, #050505 80%);
+  }
 
-  <!-- HERO -->
-  <div class="p-4 p-md-5 mb-4 position-relative overflow-hidden rounded-4" style="background: linear-gradient(to right, #141414, #0a0a0a); border: 1px solid rgba(255,255,255,0.05);">
-    <div class="position-absolute top-0 end-0 bg-primary opacity-25" style="width: 300px; height: 300px; filter: blur(100px); border-radius: 50%; transform: translate(50%, -50%);"></div>
-    <div class="row align-items-center g-4">
-      <div class="col-md-8">
-        <h1 class="fw-bold mb-2">ACJOGOS-RJ</h1>
-        <p class="text-muted mb-4 lead">
-          Plataforma para mapear empresas e profissionais de jogos no Estado do Rio de Janeiro.
+  .hero-glow-1 {
+    position: absolute;
+    top: -100px;
+    left: 20%;
+    width: 500px;
+    height: 500px;
+    background: #a742f5;
+    filter: blur(150px);
+    opacity: 0.2;
+    border-radius: 50%;
+    animation: pulse 8s infinite alternate;
+  }
+
+  .hero-glow-2 {
+    position: absolute;
+    bottom: -100px;
+    right: 20%;
+    width: 400px;
+    height: 400px;
+    background: #FF6B6B;
+    filter: blur(120px);
+    opacity: 0.15;
+    border-radius: 50%;
+    animation: pulse 10s infinite alternate-reverse;
+  }
+
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+      opacity: 0.2;
+    }
+
+    100% {
+      transform: scale(1.1);
+      opacity: 0.3;
+    }
+  }
+
+  .hero-title {
+    font-size: 4rem;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -2px;
+    background: linear-gradient(135deg, #ffffff 0%, #d4a5ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1.5rem;
+  }
+
+  .stats-strip {
+    background: rgba(255, 255, 255, 0.03);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 2rem 0;
+    margin-top: -3rem;
+    position: relative;
+    z-index: 10;
+    backdrop-filter: blur(10px);
+  }
+
+  .stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #a742f5;
+    font-weight: 600;
+  }
+
+  /* Cards de Benefícios */
+  .feature-card {
+    background: #111;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 1.5rem;
+    padding: 2.5rem;
+    height: 100%;
+    transition: transform 0.3s;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-10px);
+    border-color: #a742f5;
+  }
+
+  .feature-icon {
+    width: 60px;
+    height: 60px;
+    background: rgba(167, 66, 245, 0.1);
+    color: #a742f5;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+</style>
+
+<div class="landing-hero text-center">
+  <div class="hero-glow-1"></div>
+  <div class="hero-glow-2"></div>
+
+  <div class="container position-relative z-1">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <span
+          class="badge bg-white bg-opacity-10 border border-white border-opacity-25 text-white mb-4 px-3 py-2 rounded-pill text-uppercase ls-1">
+          Associação de Desenvolvedores do RJ
+        </span>
+
+        <h1 class="hero-title">
+          O Ecossistema de Jogos<br>do Rio de Janeiro.
+        </h1>
+
+        <p class="lead text-white-50 mb-5 mx-auto fs-5" style="max-width: 700px; font-weight: 300;">
+          Conectamos estúdios, investidores e governo para fomentar a indústria criativa.
+          Junte-se à maior rede de desenvolvimento de games do estado.
         </p>
 
-        <div class="d-flex flex-wrap gap-2">
-          <a class="btn btn-primary px-4" href="{% url 'login' %}">
-            <i class="fas fa-sign-in-alt me-2"></i>Entrar
+        <div class="d-flex justify-content-center gap-3">
+          {% if not user.is_authenticated %}
+          <a href="{% url 'register' %}"
+            class="btn btn-primary btn-lg px-5 py-3 rounded-pill fw-bold shadow-lg hover-scale">
+            Junte-se à ACJOGOS <i class="fas fa-arrow-right ms-2"></i>
           </a>
-          <a class="btn btn-outline-primary px-4" href="{% url 'register' %}">
-            <i class="fas fa-user-plus me-2"></i>Criar conta
+          {% else %}
+          <a href="{% url 'home' %}"
+            class="btn btn-primary btn-lg px-5 py-3 rounded-pill fw-bold shadow-lg hover-scale">
+            Acessar Meu Painel <i class="fas fa-columns ms-2"></i>
           </a>
-        </div>
+          {% endif %}
 
-        {# ===== ACESSO PÚBLICO ===== #}
-        <div class="mt-4">
-          <div class="fw-bold mb-2">Acesso público</div>
-          <div class="d-flex flex-wrap gap-2">
-            <a class="btn btn-outline-dark px-4" href="{% url 'public:diretorio' %}">
-              <i class="fas fa-search me-2"></i>Diretório
-            </a>
-
-            <a class="btn btn-outline-dark px-4" href="{% url 'public:estatisticas' %}">
-              <i class="fas fa-chart-pie me-2"></i>Estatísticas
-            </a>
-
-            <a class="btn btn-outline-dark px-4" href="{% url 'public:mapa' %}">
-              <i class="fas fa-map-marked-alt me-2"></i>Mapa
-            </a>
-          </div>
-          <div class="small text-muted mt-2">
-            Explore empresas e projetos sem precisar fazer login.
-          </div>
-        </div>
-
-        <div class="mt-3 small text-muted">
-          <i class="fas fa-lock me-1"></i>Acesso seguro •
-          <i class="fas fa-clipboard-list ms-2 me-1"></i>Pesquisa anual •
-          <i class="fas fa-gamepad ms-2 me-1"></i>Portfólio de projetos
-        </div>
-      </div>
-
-      <div class="col-md-4 text-center">
-        <div class="bg-white rounded-4 border shadow-sm p-4">
-          <div class="display-6 mb-2">
-            <i class="fas fa-layer-group"></i>
-          </div>
-          <div class="fw-bold">Intranet ACJOGOS-RJ</div>
-          <div class="text-muted small">Mapa • Dados • Relatórios</div>
+          <a href="#como-funciona" class="btn btn-outline-light btn-lg px-5 py-3 rounded-pill fw-bold">
+            Saiba Mais
+          </a>
         </div>
       </div>
     </div>
   </div>
-
-  <!-- COMO FUNCIONA -->
-  <div class="row g-3">
-    <div class="col-md-4">
-      <div class="card h-100 border-0 shadow-sm rounded-4">
-        <div class="card-body p-4">
-          <div class="mb-3 text-primary"><i class="fas fa-building fa-2x"></i></div>
-          <h5 class="fw-bold">Cadastre sua empresa</h5>
-          <p class="text-muted mb-0">
-            Organize informações institucionais e mantenha o cadastro atualizado.
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-4">
-      <div class="card h-100 border-0 shadow-sm rounded-4">
-        <div class="card-body p-4">
-          <div class="mb-3 text-success"><i class="fas fa-folder-open fa-2x"></i></div>
-          <h5 class="fw-bold">Gerencie projetos</h5>
-          <p class="text-muted mb-0">
-            Mostre o portfólio da sua empresa: status, descrição e histórico.
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-4">
-      <div class="card h-100 border-0 shadow-sm rounded-4">
-        <div class="card-body p-4">
-          <div class="mb-3 text-warning"><i class="fas fa-chart-line fa-2x"></i></div>
-          <h5 class="fw-bold">Responda o censo anual</h5>
-          <p class="text-muted mb-0">
-            Contribua com dados que ajudam a fortalecer o ecossistema de jogos.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-
 </div>
+
+<div class="stats-strip">
+  <div class="container">
+    <div class="row text-center g-4">
+      <div class="col-md-4">
+        <div class="stat-number">10+</div>
+        <div class="stat-label">Anos de História</div>
+      </div>
+      <div class="col-md-4 border-start border-end border-white border-opacity-10">
+        <div class="stat-number">50+</div>
+        <div class="stat-label">Empresas Associadas</div>
+      </div>
+      <div class="col-md-4">
+        <div class="stat-number">100+</div>
+        <div class="stat-label">Projetos Lançados</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="como-funciona" class="container py-5 my-5">
+  <div class="text-center mb-5">
+    <h2 class="fw-bold text-white display-6">Por que fazer parte?</h2>
+    <p class="text-white-50">Não somos apenas um mapa. Somos uma comunidade ativa.</p>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-md-4">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-network-wired"></i>
+        </div>
+        <h4 class="text-white fw-bold mb-3">Networking Real</h4>
+        <p class="text-muted mb-0">
+          Acesso direto a outros fundadores, desenvolvedores e parceiros. Troque experiências e encontre colaboradores
+          para seus projetos em nossos eventos mensais.
+        </p>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="feature-card">
+        <div class="feature-icon" style="background: rgba(45, 206, 137, 0.1); color: #2dce89;">
+          <i class="fas fa-chart-line"></i>
+        </div>
+        <h4 class="text-white fw-bold mb-3">Fomento & Negócios</h4>
+        <p class="text-muted mb-0">
+          Conectamos sua empresa a editais, investidores e oportunidades de negócios. Atuamos junto ao governo para
+          criar políticas públicas para o setor.
+        </p>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="feature-card">
+        <div class="feature-icon" style="background: rgba(251, 99, 64, 0.1); color: #fb6340;">
+          <i class="fas fa-bullhorn"></i>
+        </div>
+        <h4 class="text-white fw-bold mb-3">Visibilidade</h4>
+        <p class="text-muted mb-0">
+          Sua empresa no nosso Mapa Oficial e Diretório. Divulgamos seus lançamentos e conquistas para a imprensa e para
+          o público consumidor.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container pb-5">
+  <div class="p-5 rounded-5 position-relative overflow-hidden text-center border border-white border-opacity-10"
+    style="background: linear-gradient(135deg, #111 0%, #0a0a0a 100%);">
+
+    <div class="position-relative z-1">
+      <h2 class="fw-bold text-white mb-3">Fortaleça a Indústria Carioca</h2>
+      <p class="text-muted mb-4 mx-auto" style="max-width: 600px;">
+        Se você tem um estúdio, é freelancer ou estudante, existe um lugar para você na ACJOGOS.
+      </p>
+
+      {% if not user.is_authenticated %}
+      <a href="{% url 'register' %}" class="btn btn-outline-light px-5 py-2 rounded-pill fw-bold hover-bg-light">
+        Criar minha conta agora
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<style>
+  .hover-scale:hover {
+    transform: scale(1.05);
+  }
+
+  .hover-bg-light:hover {
+    background: #fff;
+    color: #000;
+  }
+</style>
 {% endblock %}
