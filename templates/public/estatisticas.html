@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Estatísticas{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1>Estatísticas Públicas</h1>
+
+  <div class="mt-3">
+    <p><strong>Total de empresas:</strong> {{ total_companies }}</p>
+    <p><strong>Total de projetos:</strong> {{ total_projects }}</p>
+  </div>
+
+  <hr />
+
+  <h3>Empresas por Estado</h3>
+  <ul>
+    {% for row in companies_por_estado %}
+      <li>{{ row.estado|default:"(sem estado)" }}: {{ row.total }}</li>
+    {% endfor %}
+  </ul>
+
+  <h3>Top 20 Cidades</h3>
+  <ul>
+    {% for row in companies_por_cidade %}
+      <li>{{ row.cidade|default:"(sem cidade)" }}: {{ row.total }}</li>
+    {% endfor %}
+  </ul>
+
+  <h3>Projetos por Status</h3>
+  <ul>
+    {% for row in projects_por_status %}
+      <li>
+        {# procura o label do status no dict status_choices #}
+        {% for key, label in status_choices.items %}
+          {% if key == row.status %}
+            {{ label }}
+          {% endif %}
+        {% endfor %}
+        : {{ row.total }}
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}
