@@ -25,44 +25,6 @@ render_host = os.getenv("RENDER_EXTERNAL_HOSTNAME")
 if render_host:
     ALLOWED_HOSTS.append(render_host)
 
-# ======================
-# SEGURANÇA PARA RENDER (CRÍTICO!)
-# ======================
-
-# if os.environ.get('RENDER'):
-#     # Força HTTPS no Render
-#     SECURE_SSL_REDIRECT = True
-#     SESSION_COOKIE_SECURE = True
-#     CSRF_COOKIE_SECURE = True
-#     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-    
-#     # CSRF trusted origins para o Render
-#     CSRF_TRUSTED_ORIGINS = [
-#         f'https://{render_host}',
-#         'https://*.onrender.com',
-#     ]
-    
-#     # Logging detalhado para debug
-#     LOGGING = {
-#         'version': 1,
-#         'disable_existing_loggers': False,
-#         'handlers': {
-#             'console': {
-#                 'class': 'logging.StreamHandler',
-#             },
-#         },
-#         'root': {
-#             'handlers': ['console'],
-#             'level': 'INFO',
-#         },
-#         'loggers': {
-#             'django': {
-#                 'handlers': ['console'],
-#                 'level': 'INFO',
-#                 'propagate': False,
-#             },
-#         },
-#     }
 
 INSTALLED_APPS = [
     'django.contrib.auth',
@@ -118,11 +80,9 @@ WSGI_APPLICATION = 'meuprojeto.wsgi.application'
 # BANCO DE DADOS
 # ======================
 
-# DATABASE_URL = os.getenv("DATABASE_URL")
-
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URL'),  # ← Seguro: usa variável de ambiente
+        default=os.getenv('DATABASE_URL'),  
         conn_max_age=600,
         ssl_require=True
     )
@@ -142,8 +102,8 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+LANGUAGE_CODE = 'pt-br'
+TIME_ZONE = 'America/Sao_Paulo'
 USE_I18N = True
 USE_TZ = True
 
