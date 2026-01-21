@@ -3,26 +3,60 @@ import os
 import dj_database_url
 from dotenv import load_dotenv
 
-
-
 BASE_DIR = Path(__file__).resolve().parent.parent
+
 # Carrega variáveis de ambiente do arquivo .env
 load_dotenv(BASE_DIR / ".env")
 
 SECRET_KEY = os.getenv("SECRET_KEY", "chave-insegura-fallback")
 
-# Lê do ambiente. Retorna 'True' se o valor for "True", senão False.
+# DEBUG - IMPORTANTE: No Render, deixe False, mas para debug temporário pode ser True
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
-#DEBUG = True
-
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+
 # O Render define a variável RENDER_EXTERNAL_HOSTNAME automaticamente
 render_host = os.getenv("RENDER_EXTERNAL_HOSTNAME")
-
 if render_host:
- ALLOWED_HOSTS.append(render_host)
+    ALLOWED_HOSTS.append(render_host)
 
+# ======================
+# SEGURANÇA PARA RENDER (CRÍTICO!)
+# ======================
+if os.environ.get('RENDER'):
+    # Força HTTPS no Render
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    
+    # CSRF trusted origins para o Render
+    CSRF_TRUSTED_ORIGINS = [
+        f'https://{render_host}',
+        'https://*.onrender.com',
+    ]
+    
+    # Logging detalhado para debug
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'handlers': {
+            'console': {
+                'class': 'logging.StreamHandler',
+            },
+        },
+        'root': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+        'loggers': {
+            'django': {
+                'handlers': ['console'],
+                'level': 'INFO',
+                'propagate': False,
+            },
+        },
+    }
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -41,7 +75,6 @@ INSTALLED_APPS = [
     'surveys',
     'public',
     'core.apps.CoreConfig',
-
 ]
 
 MIDDLEWARE = [
@@ -75,23 +108,29 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'meuprojeto.wsgi.application'
 
+# ======================
+# BANCO DE DADOS
+# ======================
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-DATABASES = {
-"default": dj_database_url.config(
-default=os.getenv("DATABASE_URL"),
-conn_max_age=600,
-ssl_require=True, # Importante para Render
-)
-}
-
-#DATABASES = {
- #   'default': {
-  #      'ENGINE': 'django.db.backends.sqlite3',
-        #'NAME': BASE_DIR / 'db.sqlite3',  # Para Django 4.x
-   #      'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),  # Para Django 3.x
-    #}
-#}
-
+if DATABASE_URL:
+    # PostgreSQL no Render
+    DATABASES = {
+        "default": dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            conn_health_checks=True,
+            ssl_require=True,
+        )
+    }
+else:
+    # SQLite localmente
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -105,12 +144,18 @@ TIME_ZONE = 'America/Sao_Paulo'
 USE_I18N = True
 USE_TZ = True
 
+# ======================
+# STATIC FILES (CRÍTICO!)
+# ======================
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
-
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
 STATICFILES_DIRS = [BASE_DIR / 'static']
+
+# Configuração do Whitenoise para produção
+if not DEBUG:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+else:
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -120,22 +165,28 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # ======================
 # AUTENTICAÇÃO
 # ======================
-
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/redirect/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
 
+# Sessions config (IMPORTANTE para login)
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_COOKIE_AGE = 1209600  # 2 semanas
+SESSION_SAVE_EVERY_REQUEST = True
+
 # ======================
 # CRISPY FORMS
 # ======================
-
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
+# ======================
+# MIGRAÇÕES NO RENDER
+# ======================
 if os.environ.get('RENDER'):
-    # No Render, ignora checagem de consistência de migrações
+    # Desativa verificação de migração problemática
     class DisableMigrationChecks:
         def __contains__(self, item):
             return True
@@ -144,3 +195,11 @@ if os.environ.get('RENDER'):
             return None
     
     MIGRATION_MODULES = DisableMigrationChecks()
+    
+    # Ordem forçada de migrações para evitar erro 500
+    MIGRATION_MODULES = {
+        'admin': None,
+        'auth': None,
+        'contenttypes': None,
+        'sessions': None,
+    }
