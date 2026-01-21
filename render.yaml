@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: meuprojeto-django
+    env: python
+    plan: free
+    buildCommand: chmod +x deploy.sh && ./deploy.sh
+    startCommand: gunicorn meuprojeto.wsgi:application --bind 0.0.0.0:$PORT
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: meuprojeto-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: false
+      - key: RENDER
+        value: true
+      - key: PORT
+        value: 10000
