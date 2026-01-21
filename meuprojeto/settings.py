@@ -115,12 +115,14 @@ WSGI_APPLICATION = 'meuprojeto.wsgi.application'
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-DATABASES = {'default': DATABASE_URL.config(
-        default='postgresql://postgress:ufmxwz4YEauzGSsvf8B4bmlrgkwGKIyL@dpg-d5f622juibrs7395caag-a/django_postgres_ul7a',
+DATABASES = {
+    'default': dj_database_url.config(
+        default=os.getenv('DATABASE_URL'),  # ← Seguro: usa variável de ambiente
         conn_max_age=600,
-        ssl_require=True  
-        )
-            }
+        ssl_require=True
+    )
+}
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
