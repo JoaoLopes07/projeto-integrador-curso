@@ -23,6 +23,7 @@ if render_host:
 # ======================
 # SEGURANÇA PARA RENDER (CRÍTICO!)
 # ======================
+
 if os.environ.get('RENDER'):
     # Força HTTPS no Render
     SECURE_SSL_REDIRECT = True
@@ -111,6 +112,7 @@ WSGI_APPLICATION = 'meuprojeto.wsgi.application'
 # ======================
 # BANCO DE DADOS
 # ======================
+
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 if DATABASE_URL:
@@ -147,11 +149,13 @@ USE_TZ = True
 # ======================
 # STATIC FILES (CRÍTICO!)
 # ======================
+
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
 # Configuração do Whitenoise para produção
+
 if not DEBUG:
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 else:
@@ -165,6 +169,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # ======================
 # AUTENTICAÇÃO
 # ======================
+
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
 LOGIN_URL = '/accounts/login/'
@@ -179,12 +184,14 @@ SESSION_SAVE_EVERY_REQUEST = True
 # ======================
 # CRISPY FORMS
 # ======================
+
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 # ======================
 # MIGRAÇÕES NO RENDER
 # ======================
+
 if os.environ.get('RENDER'):
     # Desativa verificação de migração problemática
     class DisableMigrationChecks:
