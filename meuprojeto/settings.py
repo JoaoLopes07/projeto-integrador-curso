@@ -1,12 +1,28 @@
 from pathlib import Path
+import os
+import dj_database_url
+from dotenv import load_dotenv
+
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+# Carrega variáveis de ambiente do arquivo .env
+load_dotenv(BASE_DIR / ".env")
 
-SECRET_KEY = 'django-insecure-ALTERE-EM-PRODUCAO'
+SECRET_KEY = os.getenv("SECRET_KEY", "chave-insegura-fallback")
 
-DEBUG = True
+# Lê do ambiente. Retorna 'True' se o valor for "True", senão False.
+DEBUG = os.getenv("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+#DEBUG = True
+
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+# O Render define a variável RENDER_EXTERNAL_HOSTNAME automaticamente
+render_host = os.getenv("RENDER_EXTERNAL_HOSTNAME")
+
+if render_host:
+ ALLOWED_HOSTS.append(render_host)
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -30,6 +46,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -58,12 +75,23 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'meuprojeto.wsgi.application'
 
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+"default": dj_database_url.config(
+default=os.getenv("DATABASE_URL"),
+conn_max_age=600,
+ssl_require=True, # Importante para Render
+)
 }
+
+#DATABASES = {
+ #   'default': {
+  #      'ENGINE': 'django.db.backends.sqlite3',
+        #'NAME': BASE_DIR / 'db.sqlite3',  # Para Django 4.x
+   #      'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),  # Para Django 3.x
+    #}
+#}
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -77,7 +105,11 @@ TIME_ZONE = 'America/Sao_Paulo'
 USE_I18N = True
 USE_TZ = True
 
-STATIC_URL = '/static/'
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
 MEDIA_URL = '/media/'
