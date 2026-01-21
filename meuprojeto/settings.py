@@ -115,24 +115,12 @@ WSGI_APPLICATION = 'meuprojeto.wsgi.application'
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-if DATABASE_URL:
-    # PostgreSQL no Render
-    DATABASES = {
-        "default": dj_database_url.config(
-            default=DATABASE_URL,
-            conn_max_age=600,
-            conn_health_checks=True,
-            ssl_require=True,
+DATABASES = {'default': DATABASE_URL.config(
+        default='postgresql://postgress:ufmxwz4YEauzGSsvf8B4bmlrgkwGKIyL@dpg-d5f622juibrs7395caag-a.ohio-postgres.render.com/django_postgres_ul7a',
+        conn_max_age=600,
+        ssl_require=True  
         )
-    }
-else:
-    # SQLite localmente
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+            }
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
