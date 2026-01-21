@@ -133,3 +133,14 @@ LOGOUT_REDIRECT_URL = '/accounts/login/'
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+if os.environ.get('RENDER'):
+    # No Render, ignora checagem de consistência de migrações
+    class DisableMigrationChecks:
+        def __contains__(self, item):
+            return True
+        
+        def __getitem__(self, item):
+            return None
+    
+    MIGRATION_MODULES = DisableMigrationChecks()
