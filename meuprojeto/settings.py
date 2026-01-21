@@ -177,26 +177,3 @@ SESSION_SAVE_EVERY_REQUEST = True
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
-
-# ======================
-# MIGRAÇÕES NO RENDER
-# ======================
-
-if os.environ.get('RENDER'):
-    # Desativa verificação de migração problemática
-    class DisableMigrationChecks:
-        def __contains__(self, item):
-            return True
-        
-        def __getitem__(self, item):
-            return None
-    
-    MIGRATION_MODULES = DisableMigrationChecks()
-    
-    # Ordem forçada de migrações para evitar erro 500
-    MIGRATION_MODULES = {
-        'admin': None,
-        'auth': None,
-        'contenttypes': None,
-        'sessions': None,
-    }
