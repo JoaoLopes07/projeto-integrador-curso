@@ -29,40 +29,40 @@ if render_host:
 # SEGURANÇA PARA RENDER (CRÍTICO!)
 # ======================
 
-if os.environ.get('RENDER'):
-    # Força HTTPS no Render
-    SECURE_SSL_REDIRECT = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+# if os.environ.get('RENDER'):
+#     # Força HTTPS no Render
+#     SECURE_SSL_REDIRECT = True
+#     SESSION_COOKIE_SECURE = True
+#     CSRF_COOKIE_SECURE = True
+#     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     
-    # CSRF trusted origins para o Render
-    CSRF_TRUSTED_ORIGINS = [
-        f'https://{render_host}',
-        'https://*.onrender.com',
-    ]
+#     # CSRF trusted origins para o Render
+#     CSRF_TRUSTED_ORIGINS = [
+#         f'https://{render_host}',
+#         'https://*.onrender.com',
+#     ]
     
-    # Logging detalhado para debug
-    LOGGING = {
-        'version': 1,
-        'disable_existing_loggers': False,
-        'handlers': {
-            'console': {
-                'class': 'logging.StreamHandler',
-            },
-        },
-        'root': {
-            'handlers': ['console'],
-            'level': 'INFO',
-        },
-        'loggers': {
-            'django': {
-                'handlers': ['console'],
-                'level': 'INFO',
-                'propagate': False,
-            },
-        },
-    }
+#     # Logging detalhado para debug
+#     LOGGING = {
+#         'version': 1,
+#         'disable_existing_loggers': False,
+#         'handlers': {
+#             'console': {
+#                 'class': 'logging.StreamHandler',
+#             },
+#         },
+#         'root': {
+#             'handlers': ['console'],
+#             'level': 'INFO',
+#         },
+#         'loggers': {
+#             'django': {
+#                 'handlers': ['console'],
+#                 'level': 'INFO',
+#                 'propagate': False,
+#             },
+#         },
+#     }
 
 INSTALLED_APPS = [
     'django.contrib.auth',
@@ -118,7 +118,7 @@ WSGI_APPLICATION = 'meuprojeto.wsgi.application'
 # BANCO DE DADOS
 # ======================
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+# DATABASE_URL = os.getenv("DATABASE_URL")
 
 DATABASES = {
     'default': dj_database_url.config(
@@ -128,6 +128,12 @@ DATABASES = {
     )
 }
 
+# DATABASES = {
+#     'default':{
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
