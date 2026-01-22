@@ -1,7 +1,7 @@
 from pathlib import Path
 import os
-import environ
-import sys
+# import environ
+# import sys
 import dj_database_url
 from dotenv import load_dotenv
 
@@ -10,8 +10,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Carrega variáveis de ambiente do arquivo .env
 load_dotenv(BASE_DIR / ".env")
 
-env = environ.Env(DEBUG=(bool, False))
-environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+# env = environ.Env(DEBUG=(bool, False))
+# environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 SECRET_KEY = os.getenv("SECRET_KEY", "chave-insegura-fallback")
 
@@ -33,6 +33,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.github',
 
     'crispy_forms',
     'crispy_bootstrap5',
@@ -45,6 +51,14 @@ INSTALLED_APPS = [
     'core.apps.CoreConfig',
 ]
 
+SITE_ID = int(os.getenv("SITE_ID", "1"))
+
+
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+]
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -53,6 +67,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -80,20 +95,23 @@ WSGI_APPLICATION = 'meuprojeto.wsgi.application'
 # BANCO DE DADOS
 # ======================
 
-DATABASES = {
-    'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URL'),  
-        conn_max_age=600,
-        ssl_require=True
-    )
-}
+DATABASE_URL = os.getenv("DATABASE_URL", "").strip()
 
-# DATABASES = {
-#     'default':{
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
+if DATABASE_URL:
+    DATABASES = {
+        "default": dj_database_url.parse(
+            DATABASE_URL,
+            conn_max_age=600,
+            ssl_require=not DEBUG,
+        )
+    }
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -137,10 +155,35 @@ LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/redirect/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
 
+# --- django-allauth (social login) ---
+SOCIALACCOUNT_LOGIN_ON_GET = True
+
+ACCOUNT_EMAIL_REQUIRED = True
+SOCIALACCOUNT_QUERY_EMAIL = True
+
+# settings.py
+
+SOCIALACCOUNT_PROVIDERS = {
+    
+    "google": {
+        "SCOPE": ["profile", "email"],
+        "AUTH_PARAMS": {"access_type": "online"},
+
+    },
+
+    
+    "github": {
+        "SCOPE": ["user:email"],
+    },
+}
+
+
+
 # Sessions config (IMPORTANTE para login)
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_COOKIE_AGE = 1209600  # 2 semanas
 SESSION_SAVE_EVERY_REQUEST = True
+
 
 # ======================
 # CRISPY FORMS

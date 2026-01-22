@@ -8,6 +8,7 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include("accounts.urls")),
+    path("social/", include("allauth.urls")),
     path("redirect/", include("core.urls")),
     path("login/", RedirectView.as_view(url="/accounts/login/", permanent=True)),
     path("", include("public.urls")),
