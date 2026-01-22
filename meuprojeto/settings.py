@@ -51,7 +51,8 @@ INSTALLED_APPS = [
     'core.apps.CoreConfig',
 ]
 
-SITE_ID = 2
+SITE_ID = int(os.getenv("SITE_ID", "1"))
+
 
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
@@ -154,8 +155,19 @@ LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/redirect/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
 
-
+# --- django-allauth (social login) ---
 SOCIALACCOUNT_LOGIN_ON_GET = True
+
+ACCOUNT_EMAIL_REQUIRED = True
+SOCIALACCOUNT_QUERY_EMAIL = True
+
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "SCOPE": ["profile", "email"],
+        "AUTH_PARAMS": {"access_type": "online"},
+    }
+}
+
 
 # Sessions config (IMPORTANTE para login)
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'

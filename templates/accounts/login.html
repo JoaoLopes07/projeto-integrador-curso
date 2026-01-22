@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load socialaccount %}
+
 
 {% block title %}Login | ACJOGOS{% endblock %}
 
@@ -188,6 +190,22 @@
                 <button type="submit" class="btn btn-login w-100 mb-4 shadow">
                     Entrar no Sistema <i class="fas fa-arrow-right ms-2 small"></i>
                 </button>
+
+                {% get_providers as socialaccount_providers %}
+                {% for provider in socialaccount_providers %}
+                    {% if provider.id == "google" %}
+                        <a class="btn btn-danger w-100 mb-3" href="{% provider_login_url 'google' %}">
+                        Entrar com Google
+                        </a>
+                    {% endif %}
+                    
+                    {% if provider.id == "github" %}
+                        <a class="btn btn-dark w-100" href="{% provider_login_url 'github' %}">
+                        Entrar com GitHub
+                        </a>
+                    {% endif %}
+                {% endfor %}
+
 
                 <div class="text-center border-top border-secondary border-opacity-25 pt-4">
                     <span class="small text-muted">Não possui acesso?</span>
