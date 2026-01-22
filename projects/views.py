@@ -2,8 +2,9 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, CreateView, UpdateView, DetailView
 from django.urls import reverse_lazy
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.contrib import messages
+from django.core.exceptions import PermissionDenied
 
 from .models import Project
 from .forms import ProjectForm
@@ -43,6 +44,10 @@ class ProjectListView(ListView):
         # Representantes veem apenas os da sua empresa
         company = get_user_company(user)
         if not company:
+            messages.warning(
+                self.request,
+                "Você não possui empresa vinculada. Nenhum projeto disponível."
+            )
             return Project.objects.none()
 
         return Project.objects.filter(company=company)
@@ -78,9 +83,9 @@ class ProjectCreateView(CreateView):
             if not company:
                 messages.error(
                     self.request,
-                    "Selecione uma empresa para o projeto."
+                    "Selecione uma empresa válida para o projeto."
                 )
-                return redirect('project_list')
+                return self.form_invalid(form)
 
             form.instance.company = company
             return super().form_valid(form)
@@ -97,6 +102,13 @@ class ProjectCreateView(CreateView):
         form.instance.company = company
         return super().form_valid(form)
 
+    def form_invalid(self, form):
+        messages.error(
+            self.request,
+            "Erro ao criar o projeto. Verifique os campos informados."
+        )
+        return super().form_invalid(form)
+
 
 # =========================
 # DETALHE DO PROJETO
@@ -106,21 +118,19 @@ class ProjectDetailView(DetailView):
     model = Project
     template_name = 'projects/project_detail.html'
 
-    def dispatch(self, request, *args, **kwargs):
-        user = request.user
+    def get_object(self):
+        project = get_object_or_404(Project, pk=self.kwargs['pk'])
+        user = self.request.user
 
         # Gestores acessam qualquer projeto
         if can_manage_projects(user):
-            return super().dispatch(request, *args, **kwargs)
+            return project
 
-        project = self.get_object()
         representante = getattr(project.company, 'representante', None)
-
         if not representante or representante.email != user.email:
-            messages.error(request, "Você não tem permissão para acessar este projeto.")
-            return redirect('project_list')
+            raise PermissionDenied("Você não tem permissão para acessar este projeto.")
 
-        return super().dispatch(request, *args, **kwargs)
+        return project
 
 
 # =========================
@@ -133,18 +143,23 @@ class ProjectUpdateView(UpdateView):
     template_name = 'projects/project_form.html'
     success_url = reverse_lazy('project_list')
 
-    def dispatch(self, request, *args, **kwargs):
-        user = request.user
+    def get_object(self):
+        project = get_object_or_404(Project, pk=self.kwargs['pk'])
+        user = self.request.user
 
         # Gestores podem editar tudo
         if can_manage_projects(user):
-            return super().dispatch(request, *args, **kwargs)
+            return project
 
-        project = self.get_object()
         representante = getattr(project.company, 'representante', None)
-
         if not representante or representante.email != user.email:
-            messages.error(request, "Você não tem permissão para editar este projeto.")
-            return redirect('project_list')
+            raise PermissionDenied("Você não tem permissão para editar este projeto.")
 
-        return super().dispatch(request, *args, **kwargs)
+        return project
+
+    def form_invalid(self, form):
+        messages.error(
+            self.request,
+            "Erro ao atualizar o projeto. Verifique os dados informados."
+        )
+        return super().form_invalid(form)
