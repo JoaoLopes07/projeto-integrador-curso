@@ -161,12 +161,22 @@ SOCIALACCOUNT_LOGIN_ON_GET = True
 ACCOUNT_EMAIL_REQUIRED = True
 SOCIALACCOUNT_QUERY_EMAIL = True
 
+# settings.py
+
 SOCIALACCOUNT_PROVIDERS = {
+    
     "google": {
         "SCOPE": ["profile", "email"],
         "AUTH_PARAMS": {"access_type": "online"},
-    }
+
+    },
+
+    
+    "github": {
+        "SCOPE": ["user:email"],
+    },
 }
+
 
 
 # Sessions config (IMPORTANTE para login)

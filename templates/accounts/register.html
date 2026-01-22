@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load socialaccount %}
 
 {% block title %}Criar Conta | ACJOGOS{% endblock %}
 
@@ -211,6 +212,22 @@
                         <i class="fas fa-rocket me-2"></i> Criar Minha Conta
                     </button>
                 </div>
+                <br/>
+                {% get_providers as socialaccount_providers %}
+                {% for provider in socialaccount_providers %}
+                    {% if provider.id == "google" %}
+                        <a class="btn btn-danger w-100 mb-3" href="{% provider_login_url 'google' %}">
+                        Entrar com Google
+                        </a>
+                    {% endif %}
+                    <br/>
+                    
+                    {% if provider.id == "github" %}
+                        <a class="btn btn-dark w-100" href="{% provider_login_url 'github' %}">
+                        Entrar com GitHub
+                        </a>
+                    {% endif %}
+                {% endfor %}
                 
                 <div class="text-center mt-4 pt-3 border-top border-secondary border-opacity-25">
                     <span class="text-muted small">Já faz parte do time?</span>
