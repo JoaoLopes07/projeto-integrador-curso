@@ -5,19 +5,18 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
 <style>
-    
     .form-section-title {
         font-size: 0.9rem;
         text-transform: uppercase;
         letter-spacing: 1.2px;
         font-weight: 700;
-        color: #d4a5ff; 
+        color: #d4a5ff;
         margin-bottom: 1.5rem;
         display: flex;
         align-items: center;
         gap: 0.8rem;
     }
-    
+
     .form-section-title::after {
         content: '';
         flex-grow: 1;
@@ -25,37 +24,35 @@
         background: linear-gradient(90deg, rgba(167, 66, 245, 0.5), transparent);
     }
 
-    
     .glass-card {
-        background: rgba(35, 35, 35, 0.95); 
-        border: 1px solid rgba(255, 255, 255, 0.15); 
+        background: rgba(35, 35, 35, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.15);
         border-radius: 1rem;
         padding: 2.5rem;
         margin-bottom: 2rem;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
     }
 
-   
-    .form-control, .input-group-text {
-        background-color: #2b2b2b !important; 
-        border: 1px solid #555 !important;      
-        color: #ffffff !important;              
+    .form-control,
+    .input-group-text {
+        background-color: #2b2b2b !important;
+        border: 1px solid #555 !important;
+        color: #ffffff !important;
         font-weight: 500;
     }
 
     .form-control:focus {
         background-color: #333 !important;
-        border-color: #a742f5 !important; 
+        border-color: #a742f5 !important;
         box-shadow: 0 0 0 3px rgba(167, 66, 245, 0.25);
     }
 
     .form-control::placeholder {
-        color: rgba(255, 255, 255, 0.4); 
+        color: rgba(255, 255, 255, 0.4);
     }
 
-   
     .form-label {
-        color: #e0e0e0; 
+        color: #e0e0e0;
         font-weight: 600;
         margin-bottom: 0.5rem;
     }
@@ -75,9 +72,9 @@
                 <div>
                     <h1 class="h3 fw-bold mb-1" style="color: #ffffff; text-shadow: 0 0 15px rgba(167, 66, 245, 0.6);">
                         {% if company %}
-                            Editando: {{ company.nome_fantasia }}
+                        Editando: {{ company.nome_fantasia }}
                         {% else %}
-                            Nova Empresa
+                        Nova Empresa
                         {% endif %}
                     </h1>
                     <p class="text-white-50 small">Preencha os dados institucionais e de localização.</p>
@@ -95,9 +92,9 @@
                     <h6 class="fw-bold"><i class="fas fa-exclamation-triangle me-2"></i>Atenção</h6>
                     <ul class="mb-0 small ps-3">
                         {% for field in form %}
-                            {% for error in field.errors %}
-                                <li><strong>{{ field.label }}:</strong> {{ error }}</li>
-                            {% endfor %}
+                        {% for error in field.errors %}
+                        <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+                        {% endfor %}
                         {% endfor %}
                     </ul>
                 </div>
@@ -111,20 +108,20 @@
                     <div class="row g-4">
                         <div class="col-md-8">
                             <label class="form-label">Nome Fantasia</label>
-                            <input type="text" name="nome_fantasia" id="id_nome_fantasia" 
-                                   class="form-control form-control-lg fs-5"
-                                   value="{{ form.nome_fantasia.value|default:'' }}" required
-                                   placeholder="Ex: Studio Games RJ">
+                            <input type="text" name="nome_fantasia" id="id_nome_fantasia"
+                                class="form-control form-control-lg fs-5"
+                                value="{{ form.nome_fantasia.value|default:'' }}" required
+                                placeholder="Ex: Studio Games RJ">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">CNPJ</label>
                             <input type="text" name="cnpj" id="id_cnpj" class="form-control form-control-lg fs-5"
-                                   value="{{ form.cnpj.value|default:'' }}" required placeholder="00.000.000/0000-00">
+                                value="{{ form.cnpj.value|default:'' }}" required placeholder="00.000.000/0000-00">
                         </div>
                         <div class="col-md-12">
                             <label class="form-label">Razão Social</label>
                             <input type="text" name="razao_social" id="id_razao_social" class="form-control"
-                                   value="{{ form.razao_social.value|default:'' }}" required>
+                                value="{{ form.razao_social.value|default:'' }}" required>
                         </div>
                     </div>
                 </div>
@@ -137,15 +134,17 @@
                         <div class="col-md-6">
                             <label class="form-label">Email Corporativo</label>
                             <div class="input-group">
-                                <span class="input-group-text bg-secondary border-secondary text-white"><i class="fas fa-at"></i></span>
-                                <input type="email" name="email_contato" id="id_email_contato"
-                                    class="form-control" value="{{ form.email_contato.value|default:'' }}" required>
+                                <span class="input-group-text bg-secondary border-secondary text-white"><i
+                                        class="fas fa-at"></i></span>
+                                <input type="email" name="email_contato" id="id_email_contato" class="form-control"
+                                    value="{{ form.email_contato.value|default:'' }}" required>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Telefone / WhatsApp</label>
                             <div class="input-group">
-                                <span class="input-group-text bg-secondary border-secondary text-white"><i class="fas fa-phone"></i></span>
+                                <span class="input-group-text bg-secondary border-secondary text-white"><i
+                                        class="fas fa-phone"></i></span>
                                 <input type="text" name="telefone" id="id_telefone" class="form-control"
                                     value="{{ form.telefone.value|default:'' }}" required placeholder="(21) 99999-9999">
                             </div>
@@ -153,10 +152,76 @@
                         <div class="col-md-12">
                             <label class="form-label">Website (Opcional)</label>
                             <div class="input-group">
-                                <span class="input-group-text bg-secondary border-secondary text-white"><i class="fas fa-globe"></i></span>
+                                <span class="input-group-text bg-secondary border-secondary text-white"><i
+                                        class="fas fa-globe"></i></span>
                                 <input type="url" name="site" id="id_site" class="form-control"
-                                    value="{{ form.site.value|default:'' }}" placeholder="https://www.suaempresa.com.br">
+                                    value="{{ form.site.value|default:'' }}"
+                                    placeholder="https://www.suaempresa.com.br">
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card">
+                    <div class="form-section-title">
+                        <i class="fas fa-share-alt fa-lg"></i> Redes Sociais e Links
+                    </div>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="form-label">LinkedIn</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-secondary border-secondary text-white"><i
+                                        class="fab fa-linkedin"></i></span>
+                                <input type="url" name="link_linkedin" class="form-control"
+                                    value="{{ form.link_linkedin.value|default:'' }}"
+                                    placeholder="https://linkedin.com/company/...">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Instagram</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-secondary border-secondary text-white"><i
+                                        class="fab fa-instagram"></i></span>
+                                <input type="url" name="link_instagram" class="form-control"
+                                    value="{{ form.link_instagram.value|default:'' }}"
+                                    placeholder="https://instagram.com/...">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Facebook</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-secondary border-secondary text-white"><i
+                                        class="fab fa-facebook"></i></span>
+                                <input type="url" name="link_facebook" class="form-control"
+                                    value="{{ form.link_facebook.value|default:'' }}"
+                                    placeholder="https://facebook.com/...">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">X (Twitter)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-secondary border-secondary text-white"><i
+                                        class="fab fa-twitter"></i></span>
+                                <input type="url" name="link_twitter" class="form-control"
+                                    value="{{ form.link_twitter.value|default:'' }}" placeholder="https://x.com/...">
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <hr class="border-secondary opacity-25 my-2">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-warning"><i class="fas fa-briefcase me-1"></i> Página de Vagas
+                                / Carreiras</label>
+                            <input type="url" name="link_vagas" class="form-control"
+                                value="{{ form.link_vagas.value|default:'' }}"
+                                placeholder="Link para sua página de 'Trabalhe Conosco'">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-info"><i class="fas fa-images me-1"></i> Portfólio / Press
+                                Kit</label>
+                            <input type="url" name="link_portfolio" class="form-control"
+                                value="{{ form.link_portfolio.value|default:'' }}"
+                                placeholder="Link externo para portfólio (Behance, ArtStation, Drive)">
                         </div>
                     </div>
                 </div>
@@ -171,7 +236,8 @@
                         </span>
                     </div>
 
-                    <p class="text-white-50 mb-3">Clique no mapa ou arraste o pino. O endereço será preenchido automaticamente.</p>
+                    <p class="text-white-50 mb-3">Clique no mapa ou arraste o pino. O endereço será preenchido
+                        automaticamente.</p>
 
                     <div class="map-frame mb-4 shadow-lg">
                         <div id="map-picker" style="height: 400px; width: 100%; z-index: 1;"></div>
@@ -209,9 +275,9 @@
                                 value="{{ form.estado.value|default:'' }}" required maxlength="2">
                         </div>
                         <div class="col-md-12">
-                             <label class="form-label">Complemento</label>
-                             <input type="text" name="complemento" id="id_complemento" class="form-control"
-                                 value="{{ form.complemento.value|default:'' }}">
+                            <label class="form-label">Complemento</label>
+                            <input type="text" name="complemento" id="id_complemento" class="form-control"
+                                value="{{ form.complemento.value|default:'' }}">
                         </div>
                     </div>
 
@@ -252,8 +318,8 @@
             map: document.getElementById('map-picker')
         };
 
-        if(elements.lat) elements.lat.classList.add('form-control', 'form-control-sm', 'bg-dark', 'text-white-50');
-        if(elements.lng) elements.lng.classList.add('form-control', 'form-control-sm', 'bg-dark', 'text-white-50');
+        if (elements.lat) elements.lat.classList.add('form-control', 'form-control-sm', 'bg-dark', 'text-white-50');
+        if (elements.lng) elements.lng.classList.add('form-control', 'form-control-sm', 'bg-dark', 'text-white-50');
 
         var initialLat = elements.lat.value ? parseFloat(elements.lat.value) : -22.9068;
         var initialLng = elements.lng.value ? parseFloat(elements.lng.value) : -43.1729;
@@ -287,7 +353,7 @@
         async function fetchAddress(lat, lng) {
             const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`;
             document.body.style.cursor = "wait";
-            
+
             try {
                 const response = await fetch(url, { headers: { 'User-Agent': 'IntranetACJOGOS/1.0' } });
                 const data = await response.json();
@@ -326,8 +392,8 @@
         }
 
         function updateInputs(lat, lng) {
-            if(elements.lat) elements.lat.value = lat.toFixed(6);
-            if(elements.lng) elements.lng.value = lng.toFixed(6);
+            if (elements.lat) elements.lat.value = lat.toFixed(6);
+            if (elements.lng) elements.lng.value = lng.toFixed(6);
         }
 
         map.on('click', function (e) {

@@ -212,6 +212,12 @@
                         <i class="fas fa-rocket me-2"></i> Criar Minha Conta
                     </button>
                 </div>
+                <div class="mt-3">
+                    <a href="{% url 'company-public-register' %}" class="btn btn-outline-light w-100">
+                        <i class="fas fa-building me-2"></i>Quero cadastrar minha empresa
+                    </a>
+                </div>
+
                 <br/>
                 {% get_providers as socialaccount_providers %}
                 {% for provider in socialaccount_providers %}
