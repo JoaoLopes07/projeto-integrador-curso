@@ -8,6 +8,11 @@ from .forms import CustomUserCreationForm, ProfileForm, AffiliateRegistrationFor
 from .forms import CustomUserCreationForm, ProfileForm
 from companies.models import Company
 from .forms import CustomUserCreationForm, ProfileForm, AffiliateRegistrationForm
+from companies.models import Company
+from projects.models import (
+    Project,
+)
+from surveys.models import SurveyResponse
 
 User = get_user_model()
 REDIRECT_URL = reverse_lazy("home")
@@ -56,7 +61,14 @@ def logout_view(request):
 
 @login_required
 def home_view(request):
-    return render(request, "accounts/home.html")
+
+    context = {
+        "total_companies": Company.objects.count(),
+        "total_projects": Project.objects.count(),
+        "total_users": User.objects.count(),
+        "total_surveys": SurveyResponse.objects.count(),
+    }
+    return render(request, "accounts/home.html", context)
 
 
 @login_required

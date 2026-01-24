@@ -43,7 +43,6 @@ urlpatterns = [
     path("company/", include("companies.urls")),
     path("projects/", include("projects.urls")),
     path("pesquisa/", include(("surveys.urls", "surveys"), namespace="surveys")),
-
 ]
 
 if settings.DEBUG:
