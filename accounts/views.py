@@ -5,6 +5,7 @@ from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.contrib import messages
 from django.urls import reverse_lazy
 
+from projects.models import Project
 from .forms import CustomUserCreationForm, ProfileForm
 from companies.models import Company
 
@@ -55,8 +56,18 @@ def logout_view(request):
 
 @login_required
 def home_view(request):
-    return render(request, "accounts/home.html")
+    total_empresas = Company.objects.count()
+    total_membros = User.objects.filter(is_active=True).count()
 
+    total_projetos = Project.objects.count()
+    projetos_andamento = Project.objects.filter(status='active').count()
+    
+    return render(request, "accounts/home.html", {
+        'total_empresas': total_empresas,
+        'total_membros': total_membros,
+        'total_projetos': total_projetos,
+        'projetos_andamento': projetos_andamento,
+    })
 
 @login_required
 def profile_view(request):
