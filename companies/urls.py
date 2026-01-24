@@ -1,11 +1,13 @@
 from django.urls import path
 from .views import (
     CompanyListView, CompanyCreateView, CompanyUpdateView, CompanyDeleteView,
-    RepresentanteListView, RepresentanteCreateView, RepresentanteUpdateView, RepresentanteDeleteView
+    RepresentanteListView, RepresentanteCreateView, RepresentanteUpdateView, RepresentanteDeleteView,
+    CompanyPublicRegisterView
 )
 
 urlpatterns = [
     path('', CompanyListView.as_view(), name='company-list'),
+    path('cadastrar/', CompanyPublicRegisterView.as_view(), name='company-public-register'),
     path('novo/', CompanyCreateView.as_view(), name='company-create'),
     path('<int:pk>/editar/', CompanyUpdateView.as_view(), name='company-update'),
     path('<int:pk>/deletar/', CompanyDeleteView.as_view(), name='company-delete'),

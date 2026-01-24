@@ -2,26 +2,44 @@ import os
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from django.db import transaction
+from django.db import transaction, IntegrityError
 
 from django.contrib.sites.models import Site
 from allauth.socialaccount.models import SocialApp
 
 
 class Command(BaseCommand):
-    help = "Configura automaticamente Site + SocialApps (Google/GitHub) do django-allauth."
+    help = "Garante Site (SITE_ID) e vincula SocialApps (Google/GitHub)."
 
     @transaction.atomic
     def handle(self, *args, **options):
         site_id = int(os.getenv("SITE_ID", getattr(settings, "SITE_ID", 1)))
-        domain = os.getenv("SITE_DOMAIN", "127.0.0.1:8000")
-        name = os.getenv("SITE_NAME", "Local")
-
+        domain = os.getenv("SITE_DOMAIN", "127.0.0.1:8000").strip()
+        name = os.getenv("SITE_NAME", "Local").strip()
         
-        site, _ = Site.objects.update_or_create(
-            id=site_id,
-            defaults={"domain": domain, "name": name},
-        )
+
+        # ✅ 1) Garantir o Site com o id correto (SITE_ID)
+        try:
+            site_obj, _ = Site.objects.update_or_create(
+                id=site_id,
+                defaults={"domain": domain, "name": name},
+            )
+        except IntegrityError:
+
+            existing = Site.objects.get(domain=domain)
+
+            
+            existing.domain = f"old-{existing.id}.local"
+            existing.name = existing.name or "Old"
+            existing.save(update_fields=["domain", "name"])
+
+            
+            site_obj, _ = Site.objects.update_or_create(
+                id=site_id,
+                defaults={"domain": domain, "name": name},
+            )
+
+
 
         def upsert(provider: str, app_name: str, client_id: str, secret: str):
             if not client_id or not secret:
@@ -38,14 +56,16 @@ class Command(BaseCommand):
                     "secret": secret,
                 },
             )
-            app.sites.add(site)
+            app.sites.add(site_obj)
 
             self.stdout.write(self.style.SUCCESS(
-                f"[{provider}] OK (vinculado ao Site id={site.id})"
+                f"[{provider}] OK — vinculado ao site id={site_obj.id} domain={site_obj.domain}"
             ))
 
         
         upsert("google", "Google", os.getenv("GOOGLE_CLIENT_ID", ""), os.getenv("GOOGLE_SECRET", ""))
         upsert("github", "GitHub", os.getenv("GITHUB_CLIENT_ID", ""), os.getenv("GITHUB_SECRET", ""))
 
-        self.stdout.write(self.style.SUCCESS("Configuração social finalizada ✅"))
+        self.stdout.write(self.style.SUCCESS(
+            f"✅ Site pronto: id={site_obj.id} domain={site_obj.domain}"
+        ))

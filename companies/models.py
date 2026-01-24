@@ -8,7 +8,7 @@ class Representante(models.Model):
     cpf = models.CharField(max_length=11, unique=True)
     email = models.EmailField()
     telefone = models.CharField(max_length=11)
-    nick_discord = models.CharField(max_length=255)
+    nick_discord = models.CharField(max_length=255, blank=True, null=True)
 
     cep = models.CharField(max_length=8)
     endereco = models.CharField(max_length=255)

@@ -97,6 +97,15 @@ WSGI_APPLICATION = 'meuprojeto.wsgi.application'
 
 DATABASE_URL = os.getenv("DATABASE_URL", "").strip()
 
+# IMPORTANTE:
+# - Em desenvolvimento: NÃO definir DATABASE_URL se não tudo que fizer vai para o banco de produção!
+# - Em produção (Render): DATABASE_URL é obrigatória
+
+
+if DEBUG and DATABASE_URL:
+    raise RuntimeError("DEBUG=True não pode usar DATABASE_URL (produção). Remova do .env local.")
+
+
 if DATABASE_URL:
     DATABASES = {
         "default": dj_database_url.parse(
@@ -164,19 +173,18 @@ SOCIALACCOUNT_QUERY_EMAIL = True
 # settings.py
 
 SOCIALACCOUNT_PROVIDERS = {
-    
+
     "google": {
         "SCOPE": ["profile", "email"],
         "AUTH_PARAMS": {"access_type": "online"},
 
     },
 
-    
+
     "github": {
         "SCOPE": ["user:email"],
     },
 }
-
 
 
 # Sessions config (IMPORTANTE para login)
