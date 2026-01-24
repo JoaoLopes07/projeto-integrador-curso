@@ -1,9 +1,10 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block title %}Gerenciar Projeto | ACJOGOS{% endblock %}
 
 {% block content %}
 <style>
-    /* Card do Cabeçalho */
     .project-header-card {
         background: linear-gradient(135deg, #2b1055 0%, #7597de 100%);
         border-radius: 1rem;
@@ -12,13 +13,12 @@
         margin-bottom: -2rem;
         position: relative;
         z-index: 1;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     }
-    
-    /* Container do Formulário */
+
     .form-container-glass {
-        background: #1a1a1a; /* Fundo sólido escuro para contraste */
-        border: 1px solid rgba(255,255,255,0.1);
+        background: #1a1a1a;
+        border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 1rem;
         padding: 4rem 2.5rem 2.5rem 2.5rem;
         margin-top: 0;
@@ -26,9 +26,8 @@
         z-index: 0;
     }
 
-    /* Labels Destacados */
     .form-label-highlight {
-        color: #d4a5ff; /* Roxo claro */
+        color: #d4a5ff;
         font-weight: 700;
         text-transform: uppercase;
         font-size: 0.8rem;
@@ -37,103 +36,178 @@
         display: block;
     }
 
-    /* Inputs de Alta Visibilidade */
-    .form-control-custom {
+    .form-control-custom,
+    .form-select,
+    .form-control {
         background-color: #2b2b2b !important;
         border: 1px solid #555 !important;
         color: #fff !important;
         border-radius: 0.5rem;
     }
-    
-    .form-control-custom:focus {
+
+    .form-control-custom:focus,
+    .form-select:focus,
+    .form-control:focus {
         border-color: #a742f5 !important;
         box-shadow: 0 0 0 3px rgba(167, 66, 245, 0.25);
+    }
+
+    .inline-group {
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        background: rgba(255, 255, 255, 0.03);
+        margin-bottom: 1rem;
+        transition: all 0.2s ease;
+    }
+
+    .inline-group:hover {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(167, 66, 245, 0.3);
     }
 </style>
 
 <div class="container pb-5 mt-4">
     <div class="row justify-content-center">
-        <div class="col-lg-8">
-            
+        <div class="col-lg-9">
+
             <div class="project-header-card text-center">
                 {% if form.instance.pk %}
-                    <h2 class="fw-bold mb-1 text-white"><i class="fas fa-edit me-2"></i>Editar Projeto</h2>
-                    <p class="text-white-50 mb-0">Atualize os detalhes e o status do desenvolvimento.</p>
+                <h2 class="fw-bold mb-1 text-white"><i class="fas fa-edit me-2"></i>Editar Projeto</h2>
+                <p class="text-white-50 mb-0">Atualize informações, galeria e links externos.</p>
                 {% else %}
-                    <h2 class="fw-bold mb-1 text-white"><i class="fas fa-gamepad me-2"></i>Novo Projeto</h2>
-                    <p class="text-white-50 mb-0">Comece a construir o portfólio da sua empresa.</p>
+                <h2 class="fw-bold mb-1 text-white"><i class="fas fa-gamepad me-2"></i>Novo Projeto</h2>
+                <p class="text-white-50 mb-0">Comece a construir o portfólio da sua empresa.</p>
                 {% endif %}
             </div>
-            
+
             <div class="form-container-glass">
-                <form method="post">
+                <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
-                    
+
                     {% if form.non_field_errors %}
-                        <div class="alert alert-danger mb-4">
-                            {% for error in form.non_field_errors %}{{ error }}{% endfor %}
-                        </div>
+                    <div class="alert alert-danger mb-4 border-0 bg-danger bg-opacity-10 text-danger">
+                        {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+                    </div>
                     {% endif %}
+
+                    <h5 class="text-white border-bottom border-secondary border-opacity-25 pb-2 mb-4">
+                        <i class="fas fa-info-circle me-2 text-primary"></i>Dados Principais
+                    </h5>
 
                     <div class="mb-4">
                         <label class="form-label-highlight">Nome do Projeto</label>
-                        <input type="text" name="name" 
-                               class="form-control form-control-custom py-3 px-3" 
-                               style="font-size: 1.2rem;"
-                               value="{{ form.instance.name|default:'' }}" 
-                               placeholder="Ex: Cyber Odyssey 2077" required>
+                        {{ form.name }}
                         {% if form.name.errors %}
-                            <div class="text-danger small mt-1 fw-bold">{{ form.name.errors.0 }}</div>
+                        <div class="text-danger small mt-1 fw-bold">{{ form.name.errors.0 }}</div>
                         {% endif %}
                     </div>
 
                     <div class="mb-4">
                         <label class="form-label-highlight">Descrição Detalhada</label>
-                        <textarea name="description" 
-                                  class="form-control form-control-custom px-3" 
-                                  rows="6" 
-                                  placeholder="Descreva o conceito, mecânicas principais, público-alvo e objetivos...">{{ form.instance.description|default:'' }}</textarea>
+                        {{ form.description }}
                         {% if form.description.errors %}
-                            <div class="text-danger small mt-1 fw-bold">{{ form.description.errors.0 }}</div>
+                        <div class="text-danger small mt-1 fw-bold">{{ form.description.errors.0 }}</div>
                         {% endif %}
                     </div>
 
                     <div class="row g-4 mb-5">
                         <div class="col-md-6">
                             <label class="form-label-highlight mb-2">Fase Atual</label>
-                            <div class="p-0">
-                                <select name="status" class="form-select form-control-custom" style="padding: 0.8rem;">
-                                    <option value="pending" {% if form.instance.status == 'pending' %}selected{% endif %}>
-                                        🟡 Planejamento
-                                    </option>
-                                    <option value="active" {% if form.instance.status == 'active' %}selected{% endif %}>
-                                        🟢 Em Desenvolvimento
-                                    </option>
-                                    <option value="finished" {% if form.instance.status == 'finished' %}selected{% endif %}>
-                                        🔵 Finalizado
-                                    </option>
-                                </select>
-                            </div>
+                            {{ form.status }}
                         </div>
 
                         <div class="col-md-6">
                             {% if form.company %}
-                                <label class="form-label-highlight mb-2">Empresa Responsável</label>
-                                <div class="p-0">
-                                    {{ form.company }} 
-                                </div>
+                            <label class="form-label-highlight mb-2">Empresa Responsável</label>
+                            {{ form.company }}
                             {% endif %}
                         </div>
                     </div>
 
-                    <hr class="border-secondary opacity-25 my-4">
+                    <h5 class="text-white border-bottom border-secondary border-opacity-25 pb-2 mb-4 mt-5">
+                        <i class="fas fa-link me-2 text-warning"></i>Links e Trailers
+                    </h5>
+
+                    {{ links.management_form }}
+                    <div id="links-container">
+                        {% for link_form in links %}
+                        <div class="inline-group">
+                            {{ link_form.id }}
+                            <div class="row g-3 align-items-center">
+                                <div class="col-md-5">
+                                    <small class="text-muted d-block mb-1">Rótulo (Ex: Steam, YouTube)</small>
+                                    {{ link_form.label }}
+                                </div>
+                                <div class="col-md-5">
+                                    <small class="text-muted d-block mb-1">URL (https://...)</small>
+                                    {{ link_form.url }}
+                                </div>
+                                <div class="col-md-2 text-end">
+                                    {% if links.can_delete %}
+                                    <div class="form-check d-inline-block pt-3">
+                                        {{ link_form.DELETE }}
+                                        <label class="form-check-label text-danger small">Apagar</label>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% if link_form.errors %}
+                            <div class="alert alert-danger mt-2 py-1 px-2 small bg-danger bg-opacity-10 border-0 mb-0">
+                                {{ link_form.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <small class="text-white-50 fst-italic"><i class="fas fa-lightbulb me-1"></i> Preencha um item para
+                        que outro vazio apareça na próxima edição.</small>
+
+                    <h5 class="text-white border-bottom border-secondary border-opacity-25 pb-2 mb-4 mt-5">
+                        <i class="fas fa-images me-2 text-info"></i>Galeria de Imagens
+                    </h5>
+
+                    {{ images.management_form }}
+                    <div id="images-container">
+                        {% for image_form in images %}
+                        <div class="inline-group">
+                            {{ image_form.id }}
+                            <div class="row g-3 align-items-center">
+                                <div class="col-md-5">
+                                    <small class="text-muted d-block mb-1">Arquivo de Imagem</small>
+                                    {{ image_form.image }}
+                                </div>
+                                <div class="col-md-5">
+                                    <small class="text-muted d-block mb-1">Legenda (Opcional)</small>
+                                    {{ image_form.caption }}
+                                </div>
+                                <div class="col-md-2 text-end">
+                                    {% if images.can_delete and image_form.instance.pk %}
+                                    <div class="form-check d-inline-block pt-3">
+                                        {{ image_form.DELETE }}
+                                        <label class="form-check-label text-danger small">Remover</label>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% if image_form.instance.pk and image_form.instance.image %}
+                            <div class="mt-2">
+                                <small class="text-success"><i class="fas fa-check me-1"></i>Imagem atual: {{
+                                    image_form.instance.image.name }}</small>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <hr class="border-secondary opacity-25 my-5">
 
                     <div class="d-flex justify-content-between align-items-center">
                         <a href="{% url 'project_list' %}" class="btn btn-outline-light px-4">
-                            Cancelar
+                            <i class="fas fa-times me-2"></i>Cancelar
                         </a>
-                        <button type="submit" class="btn btn-primary px-5 py-2 fw-bold shadow">
-                            <i class="fas fa-save me-2"></i>Salvar Projeto
+                        <button type="submit" class="btn btn-primary px-5 py-3 fw-bold shadow">
+                            <i class="fas fa-save me-2"></i>SALVAR PROJETO
                         </button>
                     </div>
 
@@ -145,13 +219,29 @@
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // Aplica o estilo customizado aos selects gerados automaticamente
-        var selects = document.querySelectorAll('select');
-        selects.forEach(function(select) {
-            select.classList.add('form-select', 'form-control-custom');
-            select.style.padding = '0.8rem';
+    document.addEventListener("DOMContentLoaded", function () {
+        const inputs = document.querySelectorAll('input[type="text"], input[type="url"], select, textarea, input[type="file"]');
+        inputs.forEach(input => {
+            if (input.type === 'file') {
+                input.classList.add('form-control', 'bg-dark', 'text-white');
+            } else if (input.tagName === 'SELECT') {
+                input.classList.add('form-select');
+            } else {
+                input.classList.add('form-control');
+            }
         });
+
+        const desc = document.querySelector('textarea[name="description"]');
+        if (desc) {
+            desc.rows = 5;
+            desc.placeholder = "Descreva o conceito, mecânicas principais, público-alvo e objetivos...";
+        }
+
+        const nameInput = document.querySelector('input[name="name"]');
+        if (nameInput) {
+            nameInput.classList.add('py-2', 'fs-5');
+            nameInput.placeholder = "Ex: Cyber Odyssey 2077";
+        }
     });
 </script>
 {% endblock %}

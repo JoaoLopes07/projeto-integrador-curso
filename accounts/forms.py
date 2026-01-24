@@ -11,13 +11,11 @@ User = get_user_model()
 # =========================
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(
-        required=True,
-        widget=forms.EmailInput(attrs={"class": "form-control"})
+        required=True, widget=forms.EmailInput(attrs={"class": "form-control"})
     )
 
     telefone = forms.CharField(
-        required=False,
-        widget=forms.TextInput(attrs={"class": "form-control"})
+        required=False, widget=forms.TextInput(attrs={"class": "form-control"})
     )
 
     class Meta:
@@ -69,6 +67,8 @@ class ProfileForm(forms.ModelForm):
             "telefone": forms.TextInput(attrs={"class": "form-control"}),
             "avatar": forms.ClearableFileInput(attrs={"class": "form-control"}),
         }
+
+
 class CustomPasswordChangeForm(PasswordChangeForm):
     old_password = forms.CharField(
         label="Senha atual",
@@ -84,3 +84,31 @@ class CustomPasswordChangeForm(PasswordChangeForm):
         label="Confirmar nova senha",
         widget=forms.PasswordInput(attrs={"class": "form-control"}),
     )
+
+
+class AffiliateRegistrationForm(CustomUserCreationForm):
+    first_name = forms.CharField(
+        required=True,
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Seu Nome"}
+        ),
+    )
+    last_name = forms.CharField(
+        required=True,
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Seu Sobrenome"}
+        ),
+    )
+
+    class Meta(CustomUserCreationForm.Meta):
+        fields = CustomUserCreationForm.Meta.fields + (
+            "first_name",
+            "last_name",
+        )
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.role = "afiliado"  # Força o papel de afiliado
+        if commit:
+            user.save()
+        return user

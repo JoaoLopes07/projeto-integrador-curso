@@ -4,12 +4,13 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.contrib import messages
 from django.urls import reverse_lazy
-
+from .forms import CustomUserCreationForm, ProfileForm, AffiliateRegistrationForm
 from .forms import CustomUserCreationForm, ProfileForm
 from companies.models import Company
+from .forms import CustomUserCreationForm, ProfileForm, AffiliateRegistrationForm
 
 User = get_user_model()
-REDIRECT_URL = reverse_lazy("home")  # Redireciona corretamente para /accounts/home/
+REDIRECT_URL = reverse_lazy("home")
 
 
 def login_view(request):
@@ -78,7 +79,7 @@ def profile_view(request):
         {
             "form": form,
             "has_company": has_company,
-        }
+        },
     )
 
 
@@ -95,3 +96,49 @@ def change_password_view(request):
         form = PasswordChangeForm(user=request.user)
 
     return render(request, "accounts/change_password.html", {"form": form})
+
+
+def affiliate_register_view(request):
+    if request.user.is_authenticated:
+        return redirect(REDIRECT_URL)
+
+    if request.method == "POST":
+        form = AffiliateRegistrationForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data.get("email")
+            if User.objects.filter(email=email).exists():
+                form.add_error("email", "Este email já está em uso.")
+            else:
+                user = form.save()
+                login(request, user)
+                messages.success(
+                    request, "Cadastro de afiliado realizado com sucesso! Bem-vindo."
+                )
+                return redirect(REDIRECT_URL)
+    else:
+        form = AffiliateRegistrationForm()
+
+    return render(request, "accounts/register_affiliate.html", {"form": form})
+
+
+def affiliate_register_view(request):
+
+    if request.user.is_authenticated:
+        return redirect(REDIRECT_URL)
+
+    if request.method == "POST":
+        form = AffiliateRegistrationForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data.get("email")
+
+            if User.objects.filter(email=email).exists():
+                form.add_error("email", "Este email já está em uso.")
+            else:
+                user = form.save()
+                login(request, user)  # Loga o usuário automaticamente
+                messages.success(request, "Cadastro de afiliado realizado com sucesso!")
+                return redirect(REDIRECT_URL)
+    else:
+        form = AffiliateRegistrationForm()
+
+    return render(request, "accounts/register_affiliate.html", {"form": form})

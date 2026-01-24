@@ -7,14 +7,13 @@
 
 {% block content %}
 <style>
-    
     .navbar a[href*="login"] {
         display: none !important;
     }
 
-   
+
     .login-container {
-        min-height: 85vh; 
+        min-height: 85vh;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -22,16 +21,16 @@
     }
 
     .login-card {
-        background: rgba(30, 30, 30, 0.8); 
-        backdrop-filter: blur(20px);        
+        background: rgba(30, 30, 30, 0.8);
+        backdrop-filter: blur(20px);
         border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 1.5rem;
         overflow: hidden;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); 
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         width: 100%;
         max-width: 900px;
         display: flex;
-        flex-direction: row; 
+        flex-direction: row;
     }
 
     .login-sidebar {
@@ -50,7 +49,10 @@
     .login-sidebar::before {
         content: '';
         position: absolute;
-        top: 0; left: 0; right: 0; bottom: 0;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
         background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
     }
 
@@ -62,7 +64,7 @@
         justify-content: center;
     }
 
-    .form-floating > .form-control {
+    .form-floating>.form-control {
         background-color: rgba(0, 0, 0, 0.3) !important;
         border: 1px solid rgba(255, 255, 255, 0.1);
         color: #fff !important;
@@ -70,19 +72,20 @@
         height: 3.5rem;
     }
 
-    .form-floating > .form-control:focus {
+    .form-floating>.form-control:focus {
         background-color: rgba(0, 0, 0, 0.5) !important;
         border-color: #a742f5;
         box-shadow: 0 0 0 4px rgba(167, 66, 245, 0.15);
     }
-    
-    .form-floating > label {
+
+    .form-floating>label {
         color: rgba(255, 255, 255, 0.5);
     }
-    
-    .form-floating > .form-control:focus ~ label,
-    .form-floating > .form-control:not(:placeholder-shown) ~ label {
-        color: #a742f5; /* Cor do label quando ativo */
+
+    .form-floating>.form-control:focus~label,
+    .form-floating>.form-control:not(:placeholder-shown)~label {
+        color: #a742f5;
+
         background-color: transparent !important;
     }
 
@@ -110,11 +113,13 @@
             flex-direction: column;
             max-width: 500px;
         }
+
         .login-sidebar {
             width: 100%;
             padding: 2rem;
             min-height: 200px;
         }
+
         .login-form-side {
             width: 100%;
             padding: 2rem;
@@ -124,13 +129,14 @@
 
 <div class="login-container">
     <div class="login-card fade-in-up">
-        
+
         <div class="login-sidebar">
             <div class="position-relative z-1">
                 <div class="mb-4">
-                    <div class="bg-white bg-opacity-25 rounded-circle d-inline-flex align-items-center justify-content-center" 
-                         style="width: 100px; height: 100px; backdrop-filter: blur(5px); box-shadow: 0 8px 32px rgba(0,0,0,0.2);">
-                       <img src="{% static 'img/logo.webp' %}" alt="Logo" style="width: 90%; height: auto; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
+                    <div class="bg-white bg-opacity-25 rounded-circle d-inline-flex align-items-center justify-content-center"
+                        style="width: 100px; height: 100px; backdrop-filter: blur(5px); box-shadow: 0 8px 32px rgba(0,0,0,0.2);">
+                        <img src="{% static 'img/logo.webp' %}" alt="Logo"
+                            style="width: 90%; height: auto; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
                     </div>
                 </div>
                 <h2 class="fw-bold mb-2">ACJOGOS</h2>
@@ -139,7 +145,7 @@
                     Gerencie projetos, associe empresas e participe do crescimento da indústria de jogos no RJ.
                 </p>
             </div>
-            
+
             <div class="position-absolute bottom-0 start-0 p-5 opacity-25">
                 <i class="fas fa-code fa-4x text-white" style="transform: rotate(-15deg);"></i>
             </div>
@@ -152,7 +158,8 @@
             </div>
 
             {% if form.non_field_errors %}
-            <div class="alert alert-danger border-0 bg-danger bg-opacity-10 text-danger d-flex align-items-center mb-4 rounded-3 p-3">
+            <div
+                class="alert alert-danger border-0 bg-danger bg-opacity-10 text-danger d-flex align-items-center mb-4 rounded-3 p-3">
                 <i class="fas fa-exclamation-circle me-3 fs-4"></i>
                 <div class="small fw-bold">
                     {% for error in form.non_field_errors %}{{ error }}{% endfor %}
@@ -164,14 +171,14 @@
                 {% csrf_token %}
 
                 <div class="form-floating mb-3">
-                    <input type="text" name="username" class="form-control"
-                        id="floatingInput" placeholder="Usuário" required autofocus>
+                    <input type="text" name="username" class="form-control" id="floatingInput" placeholder="Usuário"
+                        required autofocus>
                     <label for="floatingInput"><i class="fas fa-user me-2"></i>Usuário</label>
                 </div>
 
                 <div class="form-floating mb-4">
-                    <input type="password" name="password" class="form-control"
-                        id="floatingPassword" placeholder="Senha" required>
+                    <input type="password" name="password" class="form-control" id="floatingPassword"
+                        placeholder="Senha" required>
                     <label for="floatingPassword"><i class="fas fa-lock me-2"></i>Senha</label>
                 </div>
 
@@ -182,7 +189,8 @@
                             Lembrar-me
                         </label>
                     </div>
-                    <a href="{% url 'password_reset' %}" class="small text-primary fw-bold text-decoration-none hover-brightness">
+                    <a href="{% url 'password_reset' %}"
+                        class="small text-primary fw-bold text-decoration-none hover-brightness">
                         Esqueceu a senha?
                     </a>
                 </div>
@@ -192,27 +200,43 @@
                 </button>
 
                 {% get_providers as socialaccount_providers %}
-                {% for provider in socialaccount_providers %}
+                {% if socialaccount_providers %}
+                <div class="d-flex gap-2 mb-4">
+                    {% for provider in socialaccount_providers %}
                     {% if provider.id == "google" %}
-                        <a class="btn btn-danger w-100 mb-3" href="{% provider_login_url 'google' %}">
-                        Entrar com Google
-                        </a>
+                    <a class="btn btn-danger w-100 d-flex align-items-center justify-content-center gap-2"
+                        href="{% provider_login_url 'google' %}">
+                        <i class="fab fa-google"></i> Google
+                    </a>
                     {% endif %}
-                    
+
                     {% if provider.id == "github" %}
-                        <a class="btn btn-dark w-100" href="{% provider_login_url 'github' %}">
-                        Entrar com GitHub
-                        </a>
+                    <a class="btn btn-dark w-100 d-flex align-items-center justify-content-center gap-2"
+                        href="{% provider_login_url 'github' %}">
+                        <i class="fab fa-github"></i> GitHub
+                    </a>
                     {% endif %}
-                {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
 
 
                 <div class="text-center border-top border-secondary border-opacity-25 pt-4">
-                    <span class="small text-muted">Não possui acesso?</span>
-                    <a class="small text-white fw-bold text-decoration-none ms-1" href="{% url 'register' %}">
-                        Cadastre-se agora
-                    </a>
+                    <p class="small text-white-50 mb-3">Ainda não possui acesso?</p>
+
+                    <div class="d-flex gap-2 justify-content-center">
+                        <a href="{% url 'company-public-register' %}"
+                            class="btn btn-sm btn-outline-light px-3 py-2 fw-bold" style="border-radius: 0.5rem;">
+                            <i class="fas fa-building me-1"></i> Sou Empresa
+                        </a>
+
+                        <a href="{% url 'register-affiliate' %}" class="btn btn-sm btn-outline-info px-3 py-2 fw-bold"
+                            style="border-radius: 0.5rem;">
+                            <i class="fas fa-user-astronaut me-1"></i> Sou Profissional
+                        </a>
+                    </div>
                 </div>
+
             </form>
         </div>
 
@@ -225,6 +249,7 @@
         opacity: 0;
         transform: translateY(20px);
     }
+
     @keyframes fadeInUp {
         to {
             opacity: 1;

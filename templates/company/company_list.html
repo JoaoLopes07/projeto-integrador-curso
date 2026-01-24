@@ -1,93 +1,205 @@
 {% extends 'base.html' %}
-{% block title %}Empresas | ACJOGOS{% endblock %}
+{% load static %}
+
+{% block title %}Gerenciar Empresas | ACJOGOS{% endblock %}
 
 {% block content %}
-<div class="container pb-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+<style>
+    .table-card {
+        background: #1a1a1a;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 1rem;
+        overflow: hidden;
+    }
+
+    .table-dark-custom {
+        --bs-table-bg: transparent;
+        --bs-table-color: #e0e0e0;
+        --bs-table-border-color: rgba(255, 255, 255, 0.1);
+        margin-bottom: 0;
+    }
+
+    .table-dark-custom th {
+        background-color: rgba(0, 0, 0, 0.2);
+        color: #a0a0a0;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+        padding: 1.2rem 1rem;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .table-dark-custom td {
+        padding: 1rem;
+        vertical-align: middle;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(255, 255, 255, 0.03);
+    }
+
+    .company-icon-placeholder {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+</style>
+
+<div class="container mt-4 pb-5">
+
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 gap-3">
         <div>
-            <h2 class="fw-bold text-dark mb-1">Empresas Associadas</h2>
-            <p class="text-muted mb-0">Base de dados de estúdios e parceiros.</p>
+            <h2 class="fw-bold text-white mb-1">
+                <i class="fas fa-building me-2 text-primary"></i>Empresas Associadas
+            </h2>
+            <p class="text-white-50 mb-0">Gerencie o cadastro dos estúdios e desenvolvedores.</p>
         </div>
-        <a href="{% url 'company-create' %}" class="btn btn-primary shadow-sm">
-            <i class="fas fa-building me-2"></i>Cadastrar Empresa
-        </a>
+
+        <div class="d-flex gap-2">
+            <form class="d-flex" method="get">
+                <input class="form-control bg-dark text-white border-secondary me-2" type="search" name="q"
+                    placeholder="Buscar empresa..." value="{{ request.GET.q }}">
+                <button class="btn btn-outline-light" type="submit"><i class="fas fa-search"></i></button>
+            </form>
+            <a href="{% url 'company-create' %}" class="btn btn-primary fw-bold shadow-sm">
+                <i class="fas fa-plus me-2"></i>Nova Empresa
+            </a>
+        </div>
     </div>
 
-    <div class="card border-0 shadow-sm overflow-hidden">
-        <div class="card-body p-0">
-            {% if object_list %}
-            <div class="table-responsive">
-                <table class="table table-hover mb-0 align-middle">
-                    <thead class="bg-light">
-                        <tr>
-                            <th class="py-3 px-4 text-uppercase text-muted small fw-bold border-0">Empresa</th>
-                            <th class="py-3 px-4 text-uppercase text-muted small fw-bold border-0">CNPJ</th>
-                            <th class="py-3 px-4 text-uppercase text-muted small fw-bold border-0">Localização</th>
-                            <th class="py-3 px-4 text-uppercase text-muted small fw-bold border-0">Contato</th>
-                            <th class="py-3 px-4 text-end border-0" style="min-width: 100px;">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for company in object_list %}
-                        <tr>
-                            <td class="px-4 py-3">
-                                <div class="d-flex align-items-center">
-                                    <div class="bg-primary bg-opacity-10 text-primary rounded d-flex align-items-center justify-content-center me-3"
-                                        style="width: 40px; height: 40px;">
-                                        <i class="fas fa-building"></i>
-                                    </div>
-                                    <div>
-                                        <div class="fw-bold text-dark">{{ company.nome_fantasia }}</div>
-                                        <div class="small text-muted">{{ company.razao_social|truncatechars:20 }}</div>
-                                    </div>
+    <div class="table-card shadow">
+        <div class="table-responsive">
+            <table class="table table-dark-custom table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th class="ps-4">Empresa / CNPJ</th>
+                        <th>Representante</th>
+                        <th>Localização</th>
+                        <th>Contato</th>
+                        <th class="text-end pe-4">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for company in companies %}
+                    <tr>
+                        <td class="ps-4">
+                            <div class="d-flex align-items-center">
+                                <div class="company-icon-placeholder me-3 shadow-sm">
+                                    {{ company.nome_fantasia|first|upper }}
                                 </div>
-                            </td>
-                            <td class="px-4 py-3 text-muted font-monospace small">{{ company.cnpj }}</td>
-                            <td class="px-4 py-3">
-                                <span class="badge bg-light text-dark border rounded-pill">
-                                    <i class="fas fa-map-marker-alt me-1 text-danger"></i> {{ company.cidade }}/{{
-                                    company.estado }}
-                                </span>
-                            </td>
-                            <td class="px-4 py-3 text-muted small">
-                                <div><i class="fas fa-envelope me-2 text-muted"></i>{{ company.email_contato }}</div>
-                            </td>
-                            <td class="px-4 py-3 text-end">
-                                <div class="dropdown">
-                                    <button class="btn btn-sm btn-light border-0 rounded-circle" type="button"
-                                        data-bs-toggle="dropdown">
-                                        <i class="fas fa-ellipsis-v text-muted"></i>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end border-0 shadow">
-                                        <li><a class="dropdown-item" href="{% url 'company-update' company.pk %}"><i
-                                                    class="fas fa-edit me-2 text-primary"></i>Editar</a></li>
-                                        <li>
-                                            <hr class="dropdown-divider">
-                                        </li>
-                                        <li>
-                                            <form method="post" action="{% url 'company-delete' company.pk %}">
-                                                {% csrf_token %}
-                                                <button type="submit" class="dropdown-item text-danger"
-                                                    onclick="return confirm('Confirmar exclusão?')">
-                                                    <i class="fas fa-trash me-2"></i>Excluir
-                                                </button>
-                                            </form>
-                                        </li>
-                                    </ul>
+                                <div>
+                                    <h6 class="mb-0 fw-bold text-white">{{ company.nome_fantasia }}</h6>
+                                    <small class="text-white-50 font-monospace">{{ company.cnpj }}</small>
                                 </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% else %}
-            <div class="text-center py-5">
-                <i class="fas fa-search fa-3x text-muted opacity-25 mb-3"></i>
-                <p class="text-muted fw-bold">Nenhum registro encontrado.</p>
-            </div>
-            {% endif %}
+                            </div>
+                        </td>
+
+                        <td>
+                            {% if company.representante %}
+                            <div class="d-flex align-items-center text-light">
+                                <i class="fas fa-user-circle text-muted me-2"></i>
+                                {{ company.representante.nome_completo }}
+                            </div>
+                            {% else %}
+                            <span class="text-muted small">Pendende</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if company.cidade and company.estado %}
+                            <span class="badge bg-dark border border-secondary text-white-50 fw-normal px-3 py-2">
+                                <i class="fas fa-map-marker-alt text-danger me-2"></i>
+                                {{ company.cidade }} / {{ company.estado }}
+                            </span>
+                            {% else %}
+                            <span class="text-muted small fst-italic">
+                                <i class="fas fa-minus me-1"></i> Não informado
+                            </span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if company.site %}
+                            <a href="{{ company.site }}" target="_blank"
+                                class="btn btn-sm btn-outline-secondary border-0" title="Visitar Site">
+                                <i class="fas fa-globe"></i>
+                            </a>
+                            {% endif %}
+                            <a href="mailto:{{ company.email_contato }}"
+                                class="btn btn-sm btn-outline-secondary border-0" title="Enviar Email">
+                                <i class="fas fa-envelope"></i>
+                            </a>
+                        </td>
+
+                        <td class="text-end pe-4">
+                            <div class="btn-group">
+                                <a href="{% url 'company-detail' company.pk %}" class="btn btn-sm btn-outline-light"
+                                    title="Ver Detalhes">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{% url 'company-update' company.pk %}" class="btn btn-sm btn-outline-info"
+                                    title="Editar">
+                                    <i class="fas fa-pen"></i>
+                                </a>
+                                <a href="{% url 'company-delete' company.pk %}" class="btn btn-sm btn-outline-danger"
+                                    title="Excluir">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5">
+                            <div class="text-muted opacity-50">
+                                <i class="fas fa-folder-open fa-3x mb-3"></i>
+                                <p>Nenhuma empresa encontrada.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
+
+    {% if is_paginated %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link bg-dark text-white border-secondary"
+                    href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><span
+                    class="page-link bg-dark text-white-50 border-secondary">Anterior</span></li>
+            {% endif %}
+
+            <li class="page-item active">
+                <span class="page-link bg-primary border-primary">{{ page_obj.number }}</span>
+            </li>
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link bg-dark text-white border-secondary"
+                    href="?page={{ page_obj.next_page_number }}">Próximo</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><span class="page-link bg-dark text-white-50 border-secondary">Próximo</span>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
 </div>
 {% endblock %}

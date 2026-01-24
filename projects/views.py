@@ -1,165 +1,133 @@
+from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse_lazy
+from django.views.generic import (
+    ListView,
+    CreateView,
+    UpdateView,
+    DeleteView,
+    DetailView,
+)
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.views.generic import ListView, CreateView, UpdateView, DetailView
-from django.urls import reverse_lazy
-from django.shortcuts import redirect, get_object_or_404
+from django.db import transaction
 from django.contrib import messages
-from django.core.exceptions import PermissionDenied
 
 from .models import Project
-from .forms import ProjectForm
-from companies.models import Company
-from core.permissions import can_manage_projects, can_access_projects_area
+from .forms import ProjectForm, ProjectImageFormSet, ProjectLinkFormSet
 
 
-def get_user_company(user):
-    """
-    Retorna a empresa vinculada ao usuário (representante).
-    """
-    return Company.objects.filter(representante__email=user.email).first()
-
-
-# =========================
-# LISTAR PROJETOS
-# =========================
-@method_decorator(login_required, name='dispatch')
+@method_decorator(login_required, name="dispatch")
 class ProjectListView(ListView):
     model = Project
-    template_name = 'projects/project_list.html'
-    context_object_name = 'projects'
-
-    def dispatch(self, request, *args, **kwargs):
-        if not can_access_projects_area(request.user):
-            messages.error(request, "Você não tem permissão para acessar Projetos.")
-            return redirect('home')
-        return super().dispatch(request, *args, **kwargs)
+    template_name = "projects/project_list.html"
+    context_object_name = "projects"
 
     def get_queryset(self):
         user = self.request.user
 
-        # Gestores veem todos os projetos
-        if can_manage_projects(user):
-            return Project.objects.all()
+        if user.role == "diretoria":
+            return Project.objects.all().order_by("-created_at")
 
-        # Representantes veem apenas os da sua empresa
-        company = get_user_company(user)
-        if not company:
-            messages.warning(
-                self.request,
-                "Você não possui empresa vinculada. Nenhum projeto disponível."
-            )
-            return Project.objects.none()
-
-        return Project.objects.filter(company=company)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['can_create_project'] = can_access_projects_area(self.request.user)
-        return context
+        return Project.objects.all().order_by("-created_at")
 
 
-# =========================
-# CRIAR PROJETO
-# =========================
-@method_decorator(login_required, name='dispatch')
+@method_decorator(login_required, name="dispatch")
+class ProjectDetailView(DetailView):
+    model = Project
+    template_name = "projects/project_detail.html"
+    context_object_name = "project"
+
+
+@method_decorator(login_required, name="dispatch")
 class ProjectCreateView(CreateView):
     model = Project
     form_class = ProjectForm
-    template_name = 'projects/project_form.html'
-    success_url = reverse_lazy('project_list')
+    template_name = "projects/project_form.html"
+    success_url = reverse_lazy("project_list")
 
-    def dispatch(self, request, *args, **kwargs):
-        if not can_access_projects_area(request.user):
-            messages.error(request, "Você não tem permissão para criar projetos.")
-            return redirect('home')
-        return super().dispatch(request, *args, **kwargs)
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        if self.request.POST:
+
+            data["images"] = ProjectImageFormSet(self.request.POST, self.request.FILES)
+            data["links"] = ProjectLinkFormSet(self.request.POST)
+        else:
+
+            data["images"] = ProjectImageFormSet()
+            data["links"] = ProjectLinkFormSet()
+        return data
 
     def form_valid(self, form):
-        user = self.request.user
+        context = self.get_context_data()
+        images = context["images"]
+        links = context["links"]
 
-        # Gestores escolhem a empresa
-        if can_manage_projects(user):
-            company = form.cleaned_data.get('company')
-            if not company:
-                messages.error(
-                    self.request,
-                    "Selecione uma empresa válida para o projeto."
-                )
-                return self.form_invalid(form)
+        with transaction.atomic():
+            self.object = form.save()
 
-            form.instance.company = company
-            return super().form_valid(form)
+            if images.is_valid():
+                images.instance = self.object
+                images.save()
 
-        # Representantes usam a empresa vinculada
-        company = get_user_company(user)
-        if not company:
-            messages.error(
-                self.request,
-                "Você não tem uma empresa vinculada. Entre em contato com a diretoria."
-            )
-            return redirect('project_list')
+            if links.is_valid():
+                links.instance = self.object
+                links.save()
 
-        form.instance.company = company
+        messages.success(self.request, "Projeto criado com sucesso!")
         return super().form_valid(form)
 
     def form_invalid(self, form):
         messages.error(
-            self.request,
-            "Erro ao criar o projeto. Verifique os campos informados."
+            self.request, "Erro ao criar projeto. Verifique os campos abaixo."
         )
         return super().form_invalid(form)
 
 
-# =========================
-# DETALHE DO PROJETO
-# =========================
-@method_decorator(login_required, name='dispatch')
-class ProjectDetailView(DetailView):
-    model = Project
-    template_name = 'projects/project_detail.html'
-
-    def get_object(self):
-        project = get_object_or_404(Project, pk=self.kwargs['pk'])
-        user = self.request.user
-
-        # Gestores acessam qualquer projeto
-        if can_manage_projects(user):
-            return project
-
-        representante = getattr(project.company, 'representante', None)
-        if not representante or representante.email != user.email:
-            raise PermissionDenied("Você não tem permissão para acessar este projeto.")
-
-        return project
-
-
-# =========================
-# EDITAR PROJETO
-# =========================
-@method_decorator(login_required, name='dispatch')
+@method_decorator(login_required, name="dispatch")
 class ProjectUpdateView(UpdateView):
     model = Project
     form_class = ProjectForm
-    template_name = 'projects/project_form.html'
-    success_url = reverse_lazy('project_list')
+    template_name = "projects/project_form.html"
+    success_url = reverse_lazy("project_list")
 
-    def get_object(self):
-        project = get_object_or_404(Project, pk=self.kwargs['pk'])
-        user = self.request.user
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        if self.request.POST:
+            # Popula com dados do POST e vincula à instância atual do projeto
+            data["images"] = ProjectImageFormSet(
+                self.request.POST, self.request.FILES, instance=self.object
+            )
+            data["links"] = ProjectLinkFormSet(self.request.POST, instance=self.object)
+        else:
+            # Popula com dados do banco (para edição)
+            data["images"] = ProjectImageFormSet(instance=self.object)
+            data["links"] = ProjectLinkFormSet(instance=self.object)
+        return data
 
-        # Gestores podem editar tudo
-        if can_manage_projects(user):
-            return project
+    def form_valid(self, form):
+        context = self.get_context_data()
+        images = context["images"]
+        links = context["links"]
 
-        representante = getattr(project.company, 'representante', None)
-        if not representante or representante.email != user.email:
-            raise PermissionDenied("Você não tem permissão para editar este projeto.")
+        with transaction.atomic():
+            self.object = form.save()
 
-        return project
+            if images.is_valid():
+                images.save()
 
-    def form_invalid(self, form):
-        messages.error(
-            self.request,
-            "Erro ao atualizar o projeto. Verifique os dados informados."
-        )
-        return super().form_invalid(form)
+            if links.is_valid():
+                links.save()
+
+        messages.success(self.request, "Projeto atualizado com sucesso!")
+        return super().form_valid(form)
+
+
+@method_decorator(login_required, name="dispatch")
+class ProjectDeleteView(DeleteView):
+    model = Project
+    template_name = "projects/project_confirm_delete.html"
+    success_url = reverse_lazy("project_list")
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, "Projeto excluído com sucesso.")
+        return super().delete(request, *args, **kwargs)
