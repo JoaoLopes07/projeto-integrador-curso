@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, logout, update_session_auth_hash, get_user_model
+from django.contrib.auth import login, logout, update_session_auth_hash, get_user_model, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.contrib import messages
@@ -10,7 +10,8 @@ from .forms import CustomUserCreationForm, ProfileForm
 from companies.models import Company
 
 User = get_user_model()
-REDIRECT_URL = reverse_lazy("home")  # Redireciona corretamente para /accounts/home/
+# Redireciona corretamente para /accounts/home/
+REDIRECT_URL = reverse_lazy("home")
 
 
 def login_view(request):
@@ -33,17 +34,20 @@ def register_view(request):
 
     form = CustomUserCreationForm(request.POST or None)
 
-    if request.method == "POST":
-        form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data.get("email")
-            if User.objects.filter(email=email).exists():
-                form.add_error("email", "Este email já está em uso.")
-            else:
-                user = form.save()
-                login(request, user)
-                messages.success(request, "Conta criada com sucesso.")
-                return redirect(REDIRECT_URL)
+    if request.method == "POST" and form.is_valid():
+
+        user = form.save()
+
+        user = authenticate(
+            request,
+            username=user.username,
+            password=form.cleaned_data["password1"],
+        )
+
+        login(request, user)
+
+        messages.success(request, "Conta criada com sucesso.")
+        return redirect(REDIRECT_URL)
 
     return render(request, "accounts/register.html", {"form": form})
 
@@ -61,7 +65,7 @@ def home_view(request):
 
     total_projetos = Project.objects.count()
     projetos_andamento = Project.objects.filter(status='active').count()
-    
+
     return render(request, "accounts/home.html", {
         'total_empresas': total_empresas,
         'total_membros': total_membros,
@@ -69,10 +73,12 @@ def home_view(request):
         'projetos_andamento': projetos_andamento,
     })
 
+
 @login_required
 def profile_view(request):
     user = request.user
-    has_company = Company.objects.filter(representante__email=user.email).exists()
+    has_company = Company.objects.filter(
+        representante__email=user.email).exists()
 
     if request.method == "POST":
         form = ProfileForm(request.POST, request.FILES, instance=user)
