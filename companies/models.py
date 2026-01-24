@@ -36,7 +36,16 @@ class Company(models.Model):
     cnpj = models.CharField(max_length=14, unique=True)
     email_contato = models.EmailField()
     telefone = models.CharField(max_length=11)
-    site = models.URLField(blank=True)
+    site = models.URLField(blank=True, verbose_name="Site Oficial")
+
+    # --- NOVOS CAMPOS (ITEM 4.5 - Sessão de Links) ---
+    link_vagas = models.URLField(blank=True, verbose_name="Página de Vagas / Carreiras")
+    link_linkedin = models.URLField(blank=True, verbose_name="LinkedIn")
+    link_instagram = models.URLField(blank=True, verbose_name="Instagram")
+    link_facebook = models.URLField(blank=True, verbose_name="Facebook")
+    link_twitter = models.URLField(blank=True, verbose_name="X (Twitter)")
+    link_portfolio = models.URLField(blank=True, verbose_name="Portfólio ou Parceiros")
+    # -------------------------------------------------
 
     cep = models.CharField(max_length=8)
     endereco = models.CharField(max_length=255)
