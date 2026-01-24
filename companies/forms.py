@@ -7,10 +7,11 @@ class RepresentanteForm(forms.ModelForm):
     cpf = forms.CharField(max_length=20, required=True)
     cep = forms.CharField(max_length=20, required=True)
     telefone = forms.CharField(max_length=20, required=True)
+
     class Meta:
         model = Representante
         fields = "__all__"
-        
+
     def clean_cpf(self):
         cpf = self.cleaned_data.get("cpf", "")
         cpf = "".join(ch for ch in cpf if ch.isdigit())
@@ -32,14 +33,16 @@ class RepresentanteForm(forms.ModelForm):
         tel = "".join(ch for ch in tel if ch.isdigit())
 
         if len(tel) not in (10, 11):
-            raise forms.ValidationError("Telefone deve conter 10 ou 11 dígitos (apenas números).")
+            raise forms.ValidationError(
+                "Telefone deve conter 10 ou 11 dígitos (apenas números)."
+            )
         return tel
 
     def clean_estado(self):
         estado = (self.cleaned_data.get("estado") or "").strip().upper()
         if len(estado) != 2:
             raise forms.ValidationError("Estado deve conter 2 letras (UF). Ex: RJ, SP.")
-        return estado    
+        return estado
 
 
 class CompanyForm(forms.ModelForm):
@@ -63,6 +66,34 @@ class CompanyForm(forms.ModelForm):
                     "placeholder": "Ex: -43.1234 (Gerado automaticamente)",
                     "class": "form-control",
                 }
+            ),
+            # --- Widgets para os novos Links ---
+            "link_vagas": forms.URLInput(
+                attrs={"class": "form-control", "placeholder": "https://..."}
+            ),
+            "link_linkedin": forms.URLInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "https://linkedin.com/...",
+                }
+            ),
+            "link_instagram": forms.URLInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "https://instagram.com/...",
+                }
+            ),
+            "link_facebook": forms.URLInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "https://facebook.com/...",
+                }
+            ),
+            "link_twitter": forms.URLInput(
+                attrs={"class": "form-control", "placeholder": "https://x.com/..."}
+            ),
+            "link_portfolio": forms.URLInput(
+                attrs={"class": "form-control", "placeholder": "https://..."}
             ),
         }
 
@@ -98,20 +129,33 @@ class CompanyForm(forms.ModelForm):
                 "Telefone deve conter 10 ou 11 dígitos (apenas números)."
             )
         return tel
-    
+
+
 class RepresentantePublicForm(forms.ModelForm):
-    
+
     cpf = forms.CharField(max_length=20, required=True)
     cep = forms.CharField(max_length=20, required=True)
-    telefone = forms.CharField(max_length=20, required=True) 
+    telefone = forms.CharField(max_length=20, required=True)
+
     class Meta:
-        
-       model = Representante
-       fields = [
-            "nome_completo", "nome_social", "cpf", "email", "telefone", "nick_discord",
-            "cep", "endereco", "numero", "complemento", "bairro", "cidade", "estado",
+
+        model = Representante
+        fields = [
+            "nome_completo",
+            "nome_social",
+            "cpf",
+            "email",
+            "telefone",
+            "nick_discord",
+            "cep",
+            "endereco",
+            "numero",
+            "complemento",
+            "bairro",
+            "cidade",
+            "estado",
         ]
-       
+
     def clean_cpf(self):
         cpf = self.cleaned_data.get("cpf", "")
         cpf = "".join(ch for ch in cpf if ch.isdigit())
@@ -133,30 +177,52 @@ class RepresentantePublicForm(forms.ModelForm):
         tel = "".join(ch for ch in tel if ch.isdigit())
 
         if len(tel) not in (10, 11):
-            raise forms.ValidationError("Telefone deve conter 10 ou 11 dígitos (apenas números).")
+            raise forms.ValidationError(
+                "Telefone deve conter 10 ou 11 dígitos (apenas números)."
+            )
         return tel
 
     def clean_estado(self):
         estado = (self.cleaned_data.get("estado") or "").strip().upper()
         if len(estado) != 2:
             raise forms.ValidationError("Estado deve conter 2 letras (UF). Ex: RJ, SP.")
-        return estado       
+        return estado
+
 
 class CompanyPublicForm(CompanyForm):
-    
+
     cnpj = forms.CharField(max_length=20, required=True)
     cep = forms.CharField(max_length=20, required=True)
     telefone = forms.CharField(max_length=20, required=True)
 
     class Meta(CompanyForm.Meta):
-        
-        
+
         model = Company
         fields = [
-            "nome_fantasia", "razao_social", "cnpj", "email_contato", "telefone", "site",
-            "cep", "endereco", "numero", "complemento", "bairro", "cidade", "estado",
+            "nome_fantasia",
+            "razao_social",
+            "cnpj",
+            "email_contato",
+            "telefone",
+            "site",
+            # --- Novos campos adicionados aqui ---
+            "link_vagas",
+            "link_linkedin",
+            "link_instagram",
+            "link_facebook",
+            "link_twitter",
+            "link_portfolio",
+            # -------------------------------------
+            "cep",
+            "endereco",
+            "numero",
+            "complemento",
+            "bairro",
+            "cidade",
+            "estado",
             # latitude/longitude podem ficar de fora, pois são auto no save()
-        ] 
+        ]
+
     def clean_cnpj(self):
         cnpj = self.cleaned_data.get("cnpj", "")
         cnpj = "".join(ch for ch in cnpj if ch.isdigit())
@@ -181,4 +247,4 @@ class CompanyPublicForm(CompanyForm):
             raise forms.ValidationError(
                 "Telefone deve conter 10 ou 11 dígitos (apenas números)."
             )
-        return tel    
+        return tel
