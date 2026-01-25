@@ -43,12 +43,12 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap5',
 
-    'accounts',
     'companies',
     'projects',
     'surveys',
     'public',
     'core.apps.CoreConfig',
+    'accounts.apps.AccountsConfig',
 ]
 
 SITE_ID = int(os.getenv("SITE_ID", "1"))
@@ -199,3 +199,29 @@ SESSION_SAVE_EVERY_REQUEST = True
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+# ======================
+# EMAIL (DEBUG / TESTE)
+# ======================
+
+if DEBUG:
+    # Desenvolvimento local
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+    DEFAULT_FROM_EMAIL = "no-reply@acjogos.com"
+else:
+    # Produção isso deve resolver o problema de envio de email mas não tenho certeza
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+    EMAIL_HOST = os.getenv("EMAIL_HOST")
+    EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))
+
+    EMAIL_USE_TLS = True
+    EMAIL_USE_SSL = False
+
+    EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+    EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+
+    DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER)
+    SERVER_EMAIL = DEFAULT_FROM_EMAIL
+
+    EMAIL_TIMEOUT = int(os.getenv("EMAIL_TIMEOUT", "10"))

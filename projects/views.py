@@ -14,10 +14,13 @@ from core.permissions import can_manage_projects, can_access_projects_area
 
 def get_user_company(user):
     """
-    Retorna a empresa vinculada ao usuário (representante).
+    Retorna a empresa vinculada ao usuário via representante.user.
     """
-    return Company.objects.filter(representante__email=user.email).first()
-
+    if not user or not user.is_authenticated:
+        return None
+    
+    company = Company.objects.filter(representante__user=user).first()
+    return company
 
 # =========================
 # LISTAR PROJETOS
@@ -127,7 +130,7 @@ class ProjectDetailView(DetailView):
             return project
 
         representante = getattr(project.company, 'representante', None)
-        if not representante or representante.email != user.email:
+        if not representante or representante.user_id != user.id:
             raise PermissionDenied("Você não tem permissão para acessar este projeto.")
 
         return project
@@ -152,7 +155,7 @@ class ProjectUpdateView(UpdateView):
             return project
 
         representante = getattr(project.company, 'representante', None)
-        if not representante or representante.email != user.email:
+        if not representante or representante.user_id != user.id:
             raise PermissionDenied("Você não tem permissão para editar este projeto.")
 
         return project
