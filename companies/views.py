@@ -1,3 +1,8 @@
+import csv
+import io
+from django.http import HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
@@ -136,3 +141,70 @@ class CompanyMyUpdateView(UpdateView):
     def form_valid(self, form):
         messages.success(self.request, "Dados da sua empresa atualizados com sucesso!")
         return super().form_valid(form)
+
+
+@login_required
+@user_passes_test(can_manage_companies)
+def company_export_csv(request):
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = 'attachment; filename="relatorio_empresas.csv"'
+    response.write("\ufeff".encode("utf8"))  # BOM para Excel ler acentos
+
+    writer = csv.writer(response, delimiter=";")
+
+    # Cabeçalho
+    writer.writerow(
+        [
+            "ID",
+            "Nome Fantasia",
+            "Razão Social",
+            "CNPJ",
+            "Área de Atuação",
+            "Cidade/UF",
+            "Email",
+            "Telefone",
+        ]
+    )
+
+    # Dados
+    for company in Company.objects.all().order_by("nome_fantasia"):
+        writer.writerow(
+            [
+                company.id,
+                company.nome_fantasia,
+                company.razao_social,
+                company.cnpj,
+                company.get_area_atuacao_display(),
+                f"{company.cidade}/{company.estado}",
+                company.email_contato,
+                company.telefone,
+            ]
+        )
+
+    return response
+
+
+@login_required
+@user_passes_test(can_manage_companies)
+def company_export_pdf(request):
+    companies = Company.objects.all().order_by("nome_fantasia")
+    context = {"companies": companies, "title": "Relatório de Empresas"}
+
+    template_path = "company/report_pdf.html"
+
+    response = HttpResponse(content_type="application/pdf")
+    response["Content-Disposition"] = 'attachment; filename="relatorio_empresas.pdf"'
+
+    template = get_template(template_path)
+    html = template.render(context)
+
+    pisa_status = pisa.CreatePDF(
+        io.BytesIO(html.encode("UTF-8")),
+        dest=response,
+        encoding="UTF-8",
+    )
+
+    if pisa_status.err:
+        return HttpResponse("Erro ao gerar PDF <pre>" + html + "</pre>")
+
+    return response

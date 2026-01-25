@@ -116,12 +116,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4">
-                            <label class="form-label-highlight mb-2">Gênero</label>
-                            <div class="p-0">
-                                {{ form.genre }}
-                            </div>
-                        </div>
+                        
 
                         <div class="col-md-4">
                             {% if form.company %}
@@ -153,7 +148,6 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Aplica o estilo customizado aos selects
         var selects = document.querySelectorAll('select');
         selects.forEach(function(select) {
             select.classList.add('form-select', 'form-control-custom');

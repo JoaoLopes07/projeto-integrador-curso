@@ -1,3 +1,8 @@
+import csv
+import io
+from django.http import HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, CreateView, UpdateView, DetailView
@@ -153,3 +158,63 @@ class ProjectUpdateView(UpdateView):
             self.request, "Erro ao atualizar o projeto. Verifique os dados informados."
         )
         return super().form_invalid(form)
+
+
+@login_required
+def project_export_csv(request):
+    # Verifica permissão (apenas gestores)
+    if not can_manage_projects(request.user):
+        messages.error(request, "Você não tem permissão para exportar projetos.")
+        return redirect("home")
+
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = 'attachment; filename="relatorio_projetos.csv"'
+    response.write("\ufeff".encode("utf8"))
+
+    writer = csv.writer(response, delimiter=";")
+    writer.writerow(["ID", "Projeto", "Empresa", "Gênero", "Status", "Data Criação"])
+
+    for project in (
+        Project.objects.select_related("company").all().order_by("-created_at")
+    ):
+        writer.writerow(
+            [
+                project.id,
+                project.name,
+                project.company.nome_fantasia,
+                project.get_genre_display(),
+                project.get_status_display(),
+                project.created_at.strftime("%d/%m/%Y"),
+            ]
+        )
+
+    return response
+
+
+@login_required
+def project_export_pdf(request):
+    if not can_manage_projects(request.user):
+        messages.error(request, "Você não tem permissão para exportar projetos.")
+        return redirect("home")
+
+    projects = Project.objects.select_related("company").all().order_by("-created_at")
+    context = {"projects": projects, "title": "Relatório de Projetos"}
+
+    template_path = "projects/report_pdf.html"
+
+    response = HttpResponse(content_type="application/pdf")
+    response["Content-Disposition"] = 'attachment; filename="relatorio_projetos.pdf"'
+
+    template = get_template(template_path)
+    html = template.render(context)
+
+    pisa_status = pisa.CreatePDF(
+        io.BytesIO(html.encode("UTF-8")),
+        dest=response,
+        encoding="UTF-8",
+    )
+
+    if pisa_status.err:
+        return HttpResponse("Erro ao gerar PDF <pre>" + html + "</pre>")
+
+    return response
