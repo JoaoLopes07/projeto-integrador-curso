@@ -58,6 +58,21 @@ class Company(models.Model):
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
 
+    AREA_CHOICES = [
+        ("dev", "Desenvolvimento"),
+        ("art", "Arte/Design"),
+        ("audio", "Áudio/Música"),
+        ("edu", "Educação"),
+        ("pub", "Publisher"),
+        ("outros", "Outros"),
+    ]
+    area_atuacao = models.CharField(
+        max_length=50,
+        choices=AREA_CHOICES,
+        default="dev",
+        verbose_name="Área de Atuação",
+    )
+
     def save(self, *args, **kwargs):
 
         if not self.latitude or not self.longitude:
