@@ -99,7 +99,7 @@
                     </div>
 
                     <div class="row g-4 mb-5">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label class="form-label-highlight mb-2">Fase Atual</label>
                             <div class="p-0">
                                 <select name="status" class="form-select form-control-custom" style="padding: 0.8rem;">
@@ -116,7 +116,9 @@
                             </div>
                         </div>
 
-                        <div class="col-md-6">
+                        
+
+                        <div class="col-md-4">
                             {% if form.company %}
                                 <label class="form-label-highlight mb-2">Empresa Responsável</label>
                                 <div class="p-0">
@@ -146,7 +148,6 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Aplica o estilo customizado aos selects gerados automaticamente
         var selects = document.querySelectorAll('select');
         selects.forEach(function(select) {
             select.classList.add('form-select', 'form-control-custom');

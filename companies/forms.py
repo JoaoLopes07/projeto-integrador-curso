@@ -95,6 +95,7 @@ class CompanyForm(forms.ModelForm):
             "link_portfolio": forms.URLInput(
                 attrs={"class": "form-control", "placeholder": "https://..."}
             ),
+            "area_atuacao": forms.Select(attrs={"class": "form-select form-control"}),
         }
 
         help_texts = {

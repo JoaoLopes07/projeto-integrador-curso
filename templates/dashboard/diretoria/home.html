@@ -1,44 +1,179 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Dashboard - Diretoria{% endblock %}
+{% block title %}Dashboard da Diretoria | ACJOGOS{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-  <h2>Dashboard da Diretoria</h2>
-  <p class="text-muted">Central de gestão para liberar e administrar acessos.</p>
+<style>
+  .dashboard-card {
+    background: rgba(35, 35, 35, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+  }
 
-  <div class="row mt-4 g-3">
-    <div class="col-md-4">
-      <div class="card p-3 h-100">
-        <h5>Empresas</h5>
-        <p>Gerenciar empresas cadastradas.</p>
-        <a class="btn btn-primary" href="{% url 'company-list' %}">Abrir</a>
+  .dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+    border-color: rgba(167, 66, 245, 0.4);
+  }
+
+  .card-icon {
+    font-size: 2.5rem;
+    color: #d4a5ff;
+    margin-bottom: 1rem;
+  }
+
+  .card-title {
+    color: white;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .card-text {
+    color: #b0b0b0;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .stat-number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: linear-gradient(45deg, #fff, #a742f5);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1rem;
+  }
+</style>
+
+<div class="container py-5">
+
+  <div class="row mb-5 align-items-center">
+    <div class="col-md-8">
+      <h1 class="fw-bold text-white mb-2">
+        Painel Administrativo
+      </h1>
+      <p class="text-white-50 fs-5">
+        Bem-vindo, {{ user.get_full_name|default:user.username }}! Aqui você gerencia todo o ecossistema.
+      </p>
+    </div>
+    <div class="col-md-4 text-md-end">
+      <span class="badge bg-primary fs-6 px-3 py-2">
+        <i class="fas fa-user-shield me-2"></i>Acesso Diretoria
+      </span>
+    </div>
+  </div>
+
+  <div class="row g-4">
+
+    <div class="col-md-6 col-lg-3">
+      <div class="dashboard-card p-4 text-center d-flex flex-column">
+        <div class="card-icon">
+          <i class="fas fa-building"></i>
+        </div>
+        <h3 class="stat-number">{{ total_companies }}</h3>
+        <h5 class="card-title">Empresas</h5>
+        <p class="card-text">Estúdios e empresas associadas cadastradas.</p>
+
+        <div class="mt-auto">
+          <a href="{% url 'company-list' %}" class="btn btn-primary w-100 mb-2 fw-bold">
+            <i class="fas fa-cog me-2"></i>Gerenciar
+          </a>
+          <div class="btn-group w-100" role="group">
+            <a href="{% url 'company-export-csv' %}" class="btn btn-outline-success" title="Baixar CSV">
+              <i class="fas fa-file-csv me-1"></i>CSV
+            </a>
+            <a href="{% url 'company-export-pdf' %}" class="btn btn-outline-danger" title="Baixar PDF">
+              <i class="fas fa-file-pdf me-1"></i>PDF
+            </a>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="col-md-4">
-      <div class="card p-3 h-100">
-        <h5>Representantes</h5>
-        <p>Vincular/editar representantes das empresas.</p>
-        <a class="btn btn-primary" href="{% url 'representante-list' %}">Abrir</a>
+    <div class="col-md-6 col-lg-3">
+      <div class="dashboard-card p-4 text-center d-flex flex-column">
+        <div class="card-icon">
+          <i class="fas fa-users"></i>
+        </div>
+        <h3 class="stat-number">{{ total_representantes }}</h3>
+        <h5 class="card-title">Representantes</h5>
+        <p class="card-text">Pessoas físicas responsáveis pelas empresas.</p>
+
+        <div class="mt-auto">
+          <a href="{% url 'representante-list' %}" class="btn btn-primary w-100 fw-bold">
+            <i class="fas fa-user-edit me-2"></i>Gerenciar
+          </a>
+        </div>
       </div>
     </div>
 
-    <div class="col-md-4">
-      <div class="card p-3 h-100">
-        <h5>Projetos</h5>
-        <p>Visualizar e administrar projetos.</p>
-        <a class="btn btn-primary" href="{% url 'project_list' %}">Abrir</a>
+    <div class="col-md-6 col-lg-3">
+      <div class="dashboard-card p-4 text-center d-flex flex-column">
+        <div class="card-icon">
+          <i class="fas fa-gamepad"></i>
+        </div>
+        <h3 class="stat-number">{{ total_projects }}</h3>
+        <h5 class="card-title">Projetos</h5>
+        <p class="card-text">Jogos e produtos em desenvolvimento.</p>
+
+        <div class="mt-auto">
+          <a href="{% url 'project_list' %}" class="btn btn-primary w-100 mb-2 fw-bold">
+            <i class="fas fa-list me-2"></i>Listar Todos
+          </a>
+          <div class="btn-group w-100" role="group">
+            <a href="{% url 'project_export_csv' %}" class="btn btn-outline-success" title="Baixar CSV">
+              <i class="fas fa-file-csv me-1"></i>CSV
+            </a>
+            <a href="{% url 'project_export_pdf' %}" class="btn btn-outline-danger" title="Baixar PDF">
+              <i class="fas fa-file-pdf me-1"></i>PDF
+            </a>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="col-md-4">
-      <div class="card p-3 h-100">
-        <h5>Pesquisas</h5>
-        <p>Acessar área de surveys.</p>
-        <a class="btn btn-primary" href="/pesquisa/">Abrir</a>
+    <div class="col-md-6 col-lg-3">
+      <div class="dashboard-card p-4 text-center d-flex flex-column">
+        <div class="card-icon">
+          <i class="fas fa-chart-pie"></i>
+        </div>
+        <h3 class="stat-number">{{ total_surveys }}</h3>
+        <h5 class="card-title">Pesquisa Anual</h5>
+        <p class="card-text">Dados socioeconômicos coletados.</p>
+
+        <div class="mt-auto">
+          <a href="{% url 'surveys:history' %}" class="btn btn-outline-light w-100 mb-2">
+            <i class="fas fa-history me-2"></i>Histórico
+          </a>
+          <a href="{% url 'surveys:report_public' %}" class="btn btn-info w-100 fw-bold text-white">
+            <i class="fas fa-chart-bar me-2"></i>Relatórios
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row mt-5">
+    <div class="col-12">
+      <h4 class="text-white mb-3"><i class="fas fa-map-marked-alt me-2 text-primary"></i>Acesso Rápido</h4>
+      <div class="card bg-dark border-secondary p-4">
+        <div class="d-flex flex-wrap gap-3">
+          <a href="{% url 'public:mapa' %}" class="btn btn-outline-light">
+            <i class="fas fa-map me-2"></i>Ver Mapa do Ecossistema
+          </a>
+          <a href="{% url 'public:diretorio' %}" class="btn btn-outline-light">
+            <i class="fas fa-globe me-2"></i>Diretório Público
+          </a>
+          <a href="{% url 'change_password' %}" class="btn btn-outline-secondary ms-auto">
+            <i class="fas fa-key me-2"></i>Alterar Senha
+          </a>
+        </div>
       </div>
     </div>
   </div>
+
 </div>
 {% endblock %}
