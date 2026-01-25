@@ -22,16 +22,16 @@ def get_user_company(user):
 # =========================
 # LISTAR PROJETOS
 # =========================
-@method_decorator(login_required, name='dispatch')
+@method_decorator(login_required, name="dispatch")
 class ProjectListView(ListView):
     model = Project
-    template_name = 'projects/project_list.html'
-    context_object_name = 'projects'
+    template_name = "projects/project_list.html"
+    context_object_name = "projects"
 
     def dispatch(self, request, *args, **kwargs):
         if not can_access_projects_area(request.user):
             messages.error(request, "Você não tem permissão para acessar Projetos.")
-            return redirect('home')
+            return redirect("home")
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
@@ -46,7 +46,7 @@ class ProjectListView(ListView):
         if not company:
             messages.warning(
                 self.request,
-                "Você não possui empresa vinculada. Nenhum projeto disponível."
+                "Você não possui empresa vinculada. Nenhum projeto disponível.",
             )
             return Project.objects.none()
 
@@ -54,24 +54,24 @@ class ProjectListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['can_create_project'] = can_access_projects_area(self.request.user)
+        context["can_create_project"] = can_access_projects_area(self.request.user)
         return context
 
 
 # =========================
 # CRIAR PROJETO
 # =========================
-@method_decorator(login_required, name='dispatch')
+@method_decorator(login_required, name="dispatch")
 class ProjectCreateView(CreateView):
     model = Project
     form_class = ProjectForm
-    template_name = 'projects/project_form.html'
-    success_url = reverse_lazy('project_list')
+    template_name = "projects/project_form.html"
+    success_url = reverse_lazy("project_list")
 
     def dispatch(self, request, *args, **kwargs):
         if not can_access_projects_area(request.user):
             messages.error(request, "Você não tem permissão para criar projetos.")
-            return redirect('home')
+            return redirect("home")
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
@@ -79,11 +79,10 @@ class ProjectCreateView(CreateView):
 
         # Gestores escolhem a empresa
         if can_manage_projects(user):
-            company = form.cleaned_data.get('company')
+            company = form.cleaned_data.get("company")
             if not company:
                 messages.error(
-                    self.request,
-                    "Selecione uma empresa válida para o projeto."
+                    self.request, "Selecione uma empresa válida para o projeto."
                 )
                 return self.form_invalid(form)
 
@@ -95,63 +94,55 @@ class ProjectCreateView(CreateView):
         if not company:
             messages.error(
                 self.request,
-                "Você não tem uma empresa vinculada. Entre em contato com a diretoria."
+                "Você não tem uma empresa vinculada. Entre em contato com a diretoria.",
             )
-            return redirect('project_list')
+            return redirect("project_list")
 
         form.instance.company = company
         return super().form_valid(form)
 
     def form_invalid(self, form):
         messages.error(
-            self.request,
-            "Erro ao criar o projeto. Verifique os campos informados."
+            self.request, "Erro ao criar o projeto. Verifique os campos informados."
         )
         return super().form_invalid(form)
 
 
-# =========================
-# DETALHE DO PROJETO
-# =========================
-@method_decorator(login_required, name='dispatch')
+@method_decorator(login_required, name="dispatch")
 class ProjectDetailView(DetailView):
     model = Project
-    template_name = 'projects/project_detail.html'
+    template_name = "projects/project_detail.html"
 
     def get_object(self):
-        project = get_object_or_404(Project, pk=self.kwargs['pk'])
+        project = get_object_or_404(Project, pk=self.kwargs["pk"])
         user = self.request.user
 
-        # Gestores acessam qualquer projeto
         if can_manage_projects(user):
             return project
 
-        representante = getattr(project.company, 'representante', None)
+        representante = getattr(project.company, "representante", None)
         if not representante or representante.email != user.email:
             raise PermissionDenied("Você não tem permissão para acessar este projeto.")
 
         return project
 
 
-# =========================
-# EDITAR PROJETO
-# =========================
-@method_decorator(login_required, name='dispatch')
+@method_decorator(login_required, name="dispatch")
 class ProjectUpdateView(UpdateView):
     model = Project
     form_class = ProjectForm
-    template_name = 'projects/project_form.html'
-    success_url = reverse_lazy('project_list')
+    template_name = "projects/project_form.html"
+    success_url = reverse_lazy("project_list")
 
     def get_object(self):
-        project = get_object_or_404(Project, pk=self.kwargs['pk'])
+        project = get_object_or_404(Project, pk=self.kwargs["pk"])
         user = self.request.user
 
         # Gestores podem editar tudo
         if can_manage_projects(user):
             return project
 
-        representante = getattr(project.company, 'representante', None)
+        representante = getattr(project.company, "representante", None)
         if not representante or representante.email != user.email:
             raise PermissionDenied("Você não tem permissão para editar este projeto.")
 
@@ -159,7 +150,6 @@ class ProjectUpdateView(UpdateView):
 
     def form_invalid(self, form):
         messages.error(
-            self.request,
-            "Erro ao atualizar o projeto. Verifique os dados informados."
+            self.request, "Erro ao atualizar o projeto. Verifique os dados informados."
         )
         return super().form_invalid(form)

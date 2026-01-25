@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Relatório PDF</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 12px;
+            color: #333;
+        }
+
+        h1 {
+            color: #0d6efd;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .meta {
+            text-align: right;
+            font-size: 10px;
+            color: #666;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            color: #000;
+            font-weight: bold;
+            padding: 8px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+
+        td {
+            padding: 8px;
+            border: 1px solid #ccc;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Relatório de Pesquisa: {{ survey_year.year }}</h1>
+
+    <div class="meta">
+        Gerado por: {{ user_download.email }}<br>
+        Total de Respostas: {{ total }}
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 25%;">Empresa/Usuário</th>
+                <th style="width: 20%;">Porte</th>
+                <th style="width: 20%;">Faturamento</th>
+                <th style="width: 35%;">Dificuldade Principal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for response in responses %}
+            <tr>
+                <td>
+                    <strong>{{ response.user.email }}</strong><br>
+                    <small>Tipo: {{ response.user.get_role_display }}</small>
+                </td>
+                <td>{{ response.company_size|default:"-" }}</td>
+                <td>{{ response.annual_revenue|default:"-" }}</td>
+                <td>{{ response.main_difficulty|default:"-" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" style="text-align: center;">Nenhuma resposta encontrada.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+
+</html>

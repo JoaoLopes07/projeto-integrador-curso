@@ -1,59 +1,156 @@
-{% extends "base.html" %}
-{% block title %}Relatório Público (Agregado){% endblock %}
+{% extends 'base.html' %}
 
 {% block content %}
-<div class="container mt-4">
-  <h2>Relatório Agregado — {{ report.year }}</h2>
+<div class="container py-5">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-primary mb-0">
+                <i class="fas fa-chart-line me-2"></i>Relatório do Setor
+            </h2>
+            <p class="text-muted mb-0">Dados consolidados do ano de {{ survey_year.year }}</p>
+        </div>
+    </div>
 
-  {% if can_use_tools %}
-    <form method="get" class="row g-2 mt-3 mb-3">
-      <div class="col-auto">
-        <label class="form-label">Ano</label>
-        <select name="year" class="form-select">
-          {% for y in available_years %}
-            <option value="{{ y.year }}" {% if y.year == survey_year.year %}selected{% endif %}>{{ y.year }}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <div class="col-auto align-self-end">
-        <button class="btn btn-primary">Filtrar</button>
-      </div>
+    {% if can_use_tools %}
+    <div class="card border-0 shadow-sm mb-5">
+        <div class="card-body p-4">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <form method="get" class="row g-2 align-items-center">
+                        <div class="col-auto">
+                            <label class="fw-bold text-secondary mb-0">Filtrar por Ano:</label>
+                        </div>
+                        <div class="col-auto">
+                            <select name="year" class="form-select form-select-sm" style="min-width: 120px;">
+                                {% for y in available_years %}
+                                <option value="{{ y.year }}" {% if y.year == survey_year.year %}selected{% endif %}>
+                                    {{ y.year }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="fas fa-filter"></i> Aplicar
+                            </button>
+                        </div>
+                    </form>
+                </div>
 
-      {% if request.user.role == "diretoria" %}
-      <div class="col-auto align-self-end">
-        <a class="btn btn-outline-success" href="{% url 'surveys:export_csv' %}?year={{ survey_year.year }}">Exportar CSV</a>
-      </div>
-      {% endif %}
-    </form>
-  {% endif %}
+                {% if user.role == "diretoria" %}
+                <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                    <span class="text-muted small me-2">Exportar dados:</span>
+                    <div class="btn-group" role="group">
+                        <a href="{% url 'surveys:export_csv' %}?year={{ survey_year.year }}" class="btn btn-outline-success btn-sm">
+                            <i class="fas fa-file-csv me-1"></i> CSV
+                        </a>
+                        <a href="{% url 'surveys:export_pdf' %}?year={{ survey_year.year }}" class="btn btn-outline-danger btn-sm">
+                            <i class="fas fa-file-pdf me-1"></i> PDF
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
 
-  <div class="mt-3">
-    <p><strong>Total de respostas:</strong> {{ report.total_respostas }}</p>
-    <p><strong>Respostas com dificuldade preenchida:</strong> {{ report.total_com_dificuldade }}</p>
-  </div>
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 border-start border-4 border-primary">
+                <div class="card-body">
+                    <h6 class="text-uppercase text-muted small fw-bold">Total de Respostas</h6>
+                    <h2 class="display-5 fw-bold text-dark mb-0">{{ report.total_respostas }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 border-start border-4 border-warning">
+                <div class="card-body">
+                    <h6 class="text-uppercase text-muted small fw-bold">Com Dificuldades</h6>
+                    <h2 class="display-5 fw-bold text-dark mb-0">{{ report.total_com_dificuldade }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 bg-primary text-white">
+                <div class="card-body d-flex align-items-center justify-content-between">
+                    <div>
+                        <h6 class="text-white-50 small fw-bold mb-1">Ano de Referência</h6>
+                        <h2 class="fw-bold mb-0">{{ report.year }}</h2>
+                    </div>
+                    <i class="fas fa-calendar-alt fa-3x text-white-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
 
-  <hr>
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="card-title fw-bold mb-0">Distribuição por Porte</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover mb-0 align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-4">Porte da Empresa</th>
+                                    <th class="text-end pe-4">Qtd.</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in report.distribuicao_porte %}
+                                <tr>
+                                    <td class="ps-4">{{ item.company_size }}</td>
+                                    <td class="text-end pe-4 fw-bold">{{ item.total }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="2" class="text-center py-4 text-muted">Sem dados disponíveis</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-  <h4>Distribuição por porte</h4>
-  {% if report.distribuicao_porte %}
-    <ul>
-      {% for item in report.distribuicao_porte %}
-        <li>{{ item.company_size }} — {{ item.total }}</li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p class="text-muted">Sem dados de porte.</p>
-  {% endif %}
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="card-title fw-bold mb-0">Faixa de Faturamento</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover mb-0 align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-4">Faturamento Anual</th>
+                                    <th class="text-end pe-4">Qtd.</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in report.distribuicao_faturamento %}
+                                <tr>
+                                    <td class="ps-4">{{ item.annual_revenue }}</td>
+                                    <td class="text-end pe-4 fw-bold">{{ item.total }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="2" class="text-center py-4 text-muted">Sem dados disponíveis</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-  <h4 class="mt-4">Distribuição por faturamento</h4>
-  {% if report.distribuicao_faturamento %}
-    <ul>
-      {% for item in report.distribuicao_faturamento %}
-        <li>{{ item.annual_revenue }} — {{ item.total }}</li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p class="text-muted">Sem dados de faturamento.</p>
-  {% endif %}
 </div>
 {% endblock %}
