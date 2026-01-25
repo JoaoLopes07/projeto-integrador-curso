@@ -34,6 +34,7 @@
     }
 
     .form-control,
+    .form-select,
     .input-group-text {
         background-color: #2b2b2b !important;
         border: 1px solid #555 !important;
@@ -41,7 +42,8 @@
         font-weight: 500;
     }
 
-    .form-control:focus {
+    .form-control:focus,
+    .form-select:focus {
         background-color: #333 !important;
         border-color: #a742f5 !important;
         box-shadow: 0 0 0 3px rgba(167, 66, 245, 0.25);
@@ -118,10 +120,15 @@
                             <input type="text" name="cnpj" id="id_cnpj" class="form-control form-control-lg fs-5"
                                 value="{{ form.cnpj.value|default:'' }}" required placeholder="00.000.000/0000-00">
                         </div>
-                        <div class="col-md-12">
+
+                        <div class="col-md-8">
                             <label class="form-label">Razão Social</label>
                             <input type="text" name="razao_social" id="id_razao_social" class="form-control"
                                 value="{{ form.razao_social.value|default:'' }}" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Área de Atuação</label>
+                            {{ form.area_atuacao }}
                         </div>
                     </div>
                 </div>
@@ -306,6 +313,11 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        var selects = document.querySelectorAll('select');
+        selects.forEach(function (select) {
+            select.classList.add('form-select', 'form-control');
+        });
+
         const elements = {
             lat: document.getElementById('id_latitude'),
             lng: document.getElementById('id_longitude'),
