@@ -19,14 +19,19 @@ from core.permissions import can_manage_projects, can_access_projects_area
 
 def get_user_company(user):
     """
-    Retorna a empresa vinculada ao usuário (representante).
+    Retorna a empresa vinculada ao usuário via representante.user.
     """
-    return Company.objects.filter(representante__email=user.email).first()
+    if not user or not user.is_authenticated:
+        return None
 
+    company = Company.objects.filter(representante__user=user).first()
+    return company
 
 # =========================
 # LISTAR PROJETOS
 # =========================
+
+
 @method_decorator(login_required, name="dispatch")
 class ProjectListView(ListView):
     model = Project
@@ -35,7 +40,8 @@ class ProjectListView(ListView):
 
     def dispatch(self, request, *args, **kwargs):
         if not can_access_projects_area(request.user):
-            messages.error(request, "Você não tem permissão para acessar Projetos.")
+            messages.error(
+                request, "Você não tem permissão para acessar Projetos.")
             return redirect("home")
         return super().dispatch(request, *args, **kwargs)
 
@@ -59,7 +65,8 @@ class ProjectListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["can_create_project"] = can_access_projects_area(self.request.user)
+        context["can_create_project"] = can_access_projects_area(
+            self.request.user)
         return context
 
 
@@ -75,7 +82,8 @@ class ProjectCreateView(CreateView):
 
     def dispatch(self, request, *args, **kwargs):
         if not can_access_projects_area(request.user):
-            messages.error(request, "Você não tem permissão para criar projetos.")
+            messages.error(
+                request, "Você não tem permissão para criar projetos.")
             return redirect("home")
         return super().dispatch(request, *args, **kwargs)
 
@@ -125,9 +133,11 @@ class ProjectDetailView(DetailView):
         if can_manage_projects(user):
             return project
 
-        representante = getattr(project.company, "representante", None)
-        if not representante or representante.email != user.email:
-            raise PermissionDenied("Você não tem permissão para acessar este projeto.")
+        representante = getattr(project.company, 'representante', None)
+        if not representante or representante.user_id != user.id:
+
+            raise PermissionDenied(
+                "Você não tem permissão para acessar este projeto.")
 
         return project
 
@@ -147,9 +157,11 @@ class ProjectUpdateView(UpdateView):
         if can_manage_projects(user):
             return project
 
-        representante = getattr(project.company, "representante", None)
-        if not representante or representante.email != user.email:
-            raise PermissionDenied("Você não tem permissão para editar este projeto.")
+        representante = getattr(project.company, 'representante', None)
+        if not representante or representante.user_id != user.id:
+
+            raise PermissionDenied(
+                "Você não tem permissão para editar este projeto.")
 
         return project
 
@@ -164,7 +176,8 @@ class ProjectUpdateView(UpdateView):
 def project_export_csv(request):
     # Verifica permissão (apenas gestores)
     if not can_manage_projects(request.user):
-        messages.error(request, "Você não tem permissão para exportar projetos.")
+        messages.error(
+            request, "Você não tem permissão para exportar projetos.")
         return redirect("home")
 
     response = HttpResponse(content_type="text/csv")
@@ -172,7 +185,8 @@ def project_export_csv(request):
     response.write("\ufeff".encode("utf8"))
 
     writer = csv.writer(response, delimiter=";")
-    writer.writerow(["ID", "Projeto", "Empresa", "Gênero", "Status", "Data Criação"])
+    writer.writerow(["ID", "Projeto", "Empresa",
+                    "Gênero", "Status", "Data Criação"])
 
     for project in (
         Project.objects.select_related("company").all().order_by("-created_at")
@@ -194,10 +208,12 @@ def project_export_csv(request):
 @login_required
 def project_export_pdf(request):
     if not can_manage_projects(request.user):
-        messages.error(request, "Você não tem permissão para exportar projetos.")
+        messages.error(
+            request, "Você não tem permissão para exportar projetos.")
         return redirect("home")
 
-    projects = Project.objects.select_related("company").all().order_by("-created_at")
+    projects = Project.objects.select_related(
+        "company").all().order_by("-created_at")
     context = {"projects": projects, "title": "Relatório de Projetos"}
 
     template_path = "projects/report_pdf.html"
